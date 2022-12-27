@@ -1,11 +1,10 @@
-﻿#include "Entertainment.h"
-#include "Episode.h"
-#include "File.h"
-#include "FilesManagment.h"
-#include "Menu.h"
-#include "StringManagment.h"
-#include "Subtitle.h"
-
+﻿#include "Entertainment.hpp"
+#include "Episode.hpp"
+#include "File.hpp"
+#include "FilesManagment.hpp"
+#include "Menu.hpp"
+#include "StringManagment.hpp"
+#include "Subtitle.hpp"
 
 using namespace std;
 using ent::ChangeColor;
@@ -220,7 +219,7 @@ int main(int argc, char* argv[])
                  inserter(subtitlesSorted[subtitlesSorted.size() - 1],
                           end(subtitlesSorted[subtitlesSorted.size() - 1])));
 
-            _getch();
+            getchar();
             continue;
         }
         else if(subtitlesSorted[i].size() == 0) // DONE
@@ -234,7 +233,7 @@ int main(int argc, char* argv[])
                  inserter(episodesSorted[episodesSorted.size() - 1],
                           end(episodesSorted[episodesSorted.size() - 1])));
 
-            _getch();
+            getchar();
             continue;
         }
         else if(subtitlesSorted[i].size() > 1 && episodesSorted[i].size() > 1) // DONE
