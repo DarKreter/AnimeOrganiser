@@ -1,8 +1,13 @@
 #ifndef ENTERTAINMENT_H
 #define ENTERTAINMENT_H
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 #include <iostream>
-#include <windows.h>
 
 namespace ent {
 enum Color : uint8_t {
@@ -41,6 +46,8 @@ void Fan(int, int);
 
 /*
     Zmienia kolor konsoli
+    Works only for Windows
+    Will have no effect on Linux/Unix
     @param foreground color
     @param background color
 */
