@@ -1,44 +1,64 @@
-#include "Menu.h"
+#include "Menu.hpp"
 
 using namespace std;
 
 namespace menu {
-void ChangeColor(Color_e f, Color_e b)
+void ChangeColor([[maybe_unused]] Color_e f, [[maybe_unused]] Color_e b)
 {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
-                            static_cast<int>(f) + static_cast<int>(b) * 16);
+    // SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+    //                         static_cast<int>(f) + static_cast<int>(b) * 16);
 }
 
 void ClearScreen(Color_e fore, Color_e back)
 {
-    Sleep(100);
+    usleep(100'000);
     ChangeColor(fore, back);
-    system("cls");
+    system("clear");
 }
 
 void setCursor(const position x, const position y)
 {
+
+#ifdef _WIN32
     COORD c;
     c.X = x;
     c.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
+#else
+    printf("\033[%d;%dH", y + 1, x + 1);
+#endif
 }
 
-void StartNewThread(void (*Funkcja)(void*), void* argList, int randomValue)
+void StartNewThread(void* (*Funkcja)(void*), pthread_t& thread, void* argList)
 {
-    ((HANDLE)_beginthread(Funkcja, randomValue, argList));
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+    pthread_create(&thread, &attr, Funkcja, (void*)argList);
+
+    pthread_attr_destroy(&attr);
 }
 
-void __cdecl MenuBuforChecker(void*)
+void* MenuBuforChecker(void*)
 {
+    // hide user input
+    termios oldt;
+    tcgetattr(STDIN_FILENO, &oldt);
+    termios newt = oldt;
+    newt.c_lflag &= ~ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
     while(true) {
-        Sleep(DEFAULT_MENU_REFRESH_TIME);
+        usleep(DEFAULT_MENU_REFRESH_TIME);
 
-        if(_kbhit())
-            Menu_t::bufor.push(_getch());
+        if(kbhit())
+            Menu_t::bufor.push(getchar());
 
-        if(!Menu_t::isAnyMenuActive)
-            return;
+        if(!Menu_t::isAnyMenuActive) {
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // restore user input
+            return 0;
+        }
     }
 }
 
@@ -108,7 +128,7 @@ Menu_t::Menu_t(size_t sBL, uint_least8_t liine, uint_least8_t sl, string logoo,
 char Menu_t::GetChar()
 {
     while(bufor.empty()) {
-        Sleep(DEFAULT_MENU_REFRESH_TIME);
+        usleep(DEFAULT_MENU_REFRESH_TIME);
     }
 
     char temp = bufor.front();
@@ -123,8 +143,13 @@ uint_least8_t Menu_t::CheckKeyboard()
     try {
         while(true) {
             znak = GetChar();
-            if(znak == DEFAULT_SPECIAL_KEY_SYMBOL)
+            // if(znak == DEFAULT_SPECIAL_KEY_SYMBOL)
+            //     znak = GetChar();
+            if(znak == DEFAULT_SPECIAL_KEY_SYMBOL_1) {
                 znak = GetChar();
+                if(znak == DEFAULT_SPECIAL_KEY_SYMBOL_2)
+                    znak = GetChar();
+            }
 
             for(auto x : up)
                 if(x == znak && choice != 0)
@@ -181,7 +206,7 @@ void Menu_t::WriteLogo()
     ChangeColor(logoFore, logoBack);
 
     for(auto lol : logo)
-        cout << '\r' << string(symetryLine - (lol.length() / 2) + 1, ' ') << lol << endl;
+        cout << string(symetryLine - (lol.length() / 2) + 1, ' ') << lol << endl;
 }
 
 void Menu_t::StartMenu()
@@ -191,7 +216,7 @@ void Menu_t::StartMenu()
     ClearBufor();
 
     if(++isAnyMenuActive == 1) // zadne nie bylo aktywne odpalamy watek
-        menu::StartNewThread(menu::MenuBuforChecker);
+        menu::StartNewThread(menu::MenuBuforChecker, thread);
 
     for(auto menuu : menuList)
         menuu.Active(false);
@@ -233,9 +258,36 @@ void Menu_t::GoUpper()
 void Menu_t::Die()
 {
     isAnyMenuActive--; // Jak wyjdzie zero to watek sie przerwie
+    pthread_join(thread, NULL);
     throw SpecialAction_t{SpecialAction_t::destroy};
 }
 
 void Menu_t::Refresh() { throw SpecialAction_t{SpecialAction_t::refreshAll}; }
+
+int kbhit(void)
+{
+    struct termios oldt, newt;
+    int ch;
+    int oldf;
+
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+    ch = getchar();
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+    if(ch != EOF) {
+        ungetc(ch, stdin);
+        return 1;
+    }
+
+    return 0;
+}
 
 } // namespace menu

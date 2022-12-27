@@ -1,37 +1,52 @@
 ﻿#ifndef MENU_H
 #define MENU_H
 
-#include <conio.h>
 #include <forward_list>
 #include <functional>
 #include <iostream>
-#include <process.h>
 #include <queue>
 #include <sstream>
+#include <stdio.h>
 #include <string>
 #include <vector>
-#include <windows.h>
 
+#ifdef _WIN32
+#include <Windows.h>
+#include <conio.h>
+#include <process.h>
+#else
+#include <curses.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <termios.h>
+#include <unistd.h>
+
+#endif
 
 #define DEFAULT_UP_KEYBOARD_KEYS                                                                   \
     {                                                                                              \
-        72, 87, 119                                                                                \
+        87, 119, 65                                                                                \
     } // W w ↑
 #define DEFAULT_DOWN_KEYBOARD_KEYS                                                                 \
     {                                                                                              \
-        80, 83, 115                                                                                \
+        83, 115, 66                                                                                \
     } // S s ↓
 #define DEFAULT_IN_KEYBOARD_KEYS                                                                   \
     {                                                                                              \
-        13                                                                                         \
-    } // ENTER
+        10                                                                                         \
+    } // ENTER (13 on Windows)
 #define DEFAULT_BACK_KEYBOARD_KEYS                                                                 \
     {                                                                                              \
-        27, 8                                                                                      \
-    } // ESC, BACKSPACE
+        27, 127                                                                                    \
+    } // ESC, BACKSPACE (8 on widnows)
 
-#include "Entertainment.h"
-extern ent::Color errorColor, SIColor, userColor, dataColor; // USUN TO POTEM
+#include "Entertainment.hpp"
+// Chryste ale to jest shitty rozwiązanie, na załączenie tych zmiennych tutaj i w
+// SubtitleEpisodeManagment, bo tam są zmienne globalne, a tu define tego samego xDDD
+#define errorColor ent::darkRed
+#define SIColor ent::blue
+#define userColor ent::lime
+#define dataColor ent::darkBlue
 
 namespace menu {
 using WskaznikNaFunkcjeMenu = std::function<void(void)>;
@@ -58,10 +73,12 @@ enum Color_e : uint8_t {
     white
 };
 
-constexpr short DEFAULT_MENU_REFRESH_TIME = 20; //[ms]
+constexpr short DEFAULT_MENU_REFRESH_TIME = 20'000; //[us]
 constexpr Color_e DEFAULT_BACKGROUND_COLOR = black;
 constexpr Color_e DEFAULT_FOREGROUND_COLOR = white;
-constexpr emblem DEFAULT_SPECIAL_KEY_SYMBOL = 224;
+// On windows we got one sequence (224 and then arrow number)
+constexpr emblem DEFAULT_SPECIAL_KEY_SYMBOL_1 = 27; // 224; for windows
+constexpr emblem DEFAULT_SPECIAL_KEY_SYMBOL_2 = 91; // 224; for windows
 
 const Color_e DEFAULT_MENU_LOGO_FORE = Color_e(SIColor);
 constexpr Color_e DEFAULT_MENU_LOGO_BACK = black;
@@ -81,9 +98,9 @@ void ChangeColor(Color_e, Color_e = DEFAULT_BACKGROUND_COLOR);
 void ClearScreen(Color_e = DEFAULT_FOREGROUND_COLOR, Color_e = DEFAULT_BACKGROUND_COLOR);
 void setCursor(const position, const position);
 
-void __cdecl MenuBuforChecker(void*);
-void StartNewThread(void (*)(void*), void* = nullptr, int = 0);
-
+void* MenuBuforChecker(void*);
+void StartNewThread(void* (*)(void*), pthread_t&, void* = nullptr);
+int kbhit(void);
 /*
 lol
 */
@@ -156,10 +173,11 @@ class Menu_t {
         confirming->DeleteMenu();
 
     */
+    pthread_t thread;
 
     class MenuOption_t;
     friend MenuOption_t;
-    friend void MenuBuforChecker(void*);
+    friend void* MenuBuforChecker(void*);
 
     std::vector<MenuOption_t> menuList;
     uint_least8_t choice;
