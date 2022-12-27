@@ -1,6 +1,5 @@
 #include "Episode.h"
 
-namespace file
-{
+namespace file {
 
 }

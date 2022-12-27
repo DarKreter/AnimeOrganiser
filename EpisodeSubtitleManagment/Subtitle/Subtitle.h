@@ -4,31 +4,24 @@
 #include "../File/File.h"
 #include <vector>
 
-namespace file
-{
-	class Subtitle :
-		public file::File
-	{
-	private:
-		static inline int offset;
-		static inline std::vector<std::string> extensions = { "ass", "srt", "txt", "ssa" };
-	public:
-		Subtitle(std::wstring n)
-			:File(n)
-		{
-			;
-		}
+namespace file {
+class Subtitle : public file::File {
+private:
+    static inline int offset;
+    static inline std::vector<std::string> extensions = {"ass", "srt", "txt", "ssa"};
 
-		std::wstring NewName();
-		static inline std::vector<std::string> folders = { "sub", "subs", "napisy", "subtitles" };
-		static void Offset(int of) { offset = of; }
-		static int Offset() { return offset; }
-		static std::vector<std::string>& Extensions() { return extensions; }
+public:
+    Subtitle(std::wstring n) : File(n) { ; }
 
-		void FindEpNumber() { this->File::FindEpNumber(offset); }
+    std::wstring NewName();
+    static inline std::vector<std::string> folders = {"sub", "subs", "napisy", "subtitles"};
+    static void Offset(int of) { offset = of; }
+    static int Offset() { return offset; }
+    static std::vector<std::string>& Extensions() { return extensions; }
 
-	};
-
+    void FindEpNumber() { this->File::FindEpNumber(offset); }
 };
+
+}; // namespace file
 
 #endif // !SUBTITLE_H
