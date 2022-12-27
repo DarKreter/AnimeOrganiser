@@ -23,6 +23,8 @@
 
 #endif
 
+#include <fstream>
+
 #define DEFAULT_UP_KEYBOARD_KEYS                                                                   \
     {                                                                                              \
         87, 119, 65                                                                                \
@@ -201,18 +203,6 @@ class Menu_t {
     uint_least8_t CheckKeyboard();
     void WriteLogo();
 
-    struct SpecialAction_t {
-        enum Action_e {
-            refreshAll,
-            goToPreviousMenu,
-            destroy
-        };
-
-        Action_e what;
-
-        Action_e operator()() { return what; }
-    };
-
     virtual ~Menu_t() { ; }
 
     Menu_t(size_t, uint_least8_t, uint_least8_t, std::string,
@@ -228,6 +218,18 @@ class Menu_t {
            std::vector<Color_e>);
 
 public:
+    struct SpecialAction_t {
+        enum Action_e {
+            refreshAll,
+            goToPreviousMenu,
+            destroy
+        };
+
+        Action_e what;
+
+        Action_e operator()() { return what; }
+    };
+
     static char GetChar();
 
     void StartMenu();

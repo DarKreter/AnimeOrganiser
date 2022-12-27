@@ -16,8 +16,8 @@ void Fan(int howLong, int breakTime)
 {
     char tab[] = {'\\', '-', '/', '|'};
     for(int i = 0; i < howLong; i++) {
-        cout << tab[i % 4] << "\b";
-        sleep(breakTime);
+        cout << tab[i % 4] << "\b" << flush;
+        usleep(breakTime);
     }
 }
 

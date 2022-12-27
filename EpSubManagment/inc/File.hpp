@@ -18,34 +18,35 @@ struct Error_t {
 };
 
 class File {
-private:
-    static std::wstring animeName;
-    static std::wstring animeDirectory;
+public:
+    static std::string animeName;
+    static std::string animeDirectory;
     static int seasonNumber;
     static int maxEpisodeNumber;
-    std::wstring originalName;
-    std::wstring originalNameWithPath;
+    std::string originalName;
+    std::string originalNameWithPath;
 
 public:
     int episodeNumber = 0;
 
-    std::wstring GetFileExtension();
-    std::wstring NewName();
-    std::wstring NewNameWithoutExt();
-    std::wstring NewNameWithPath();
-    static int GetSeasonNumber(std::wstring path);
-    static std::wstring GetAnimeName(std::wstring path);
-    static void Configure(std::wstring aN, std::wstring aD, int sN);
-    static std::wstring GetDirectory() { return animeDirectory; }
+    std::string GetFileExtension();
+    std::string NewName();
+    std::string NewNameWithoutExt();
+    std::string NewNameWithPath();
+    static int GetSeasonNumber(std::string path);
+    static std::string GetAnimeName(std::string path);
+    static void Configure(std::string aN, std::string aD, int sN);
+    static std::string GetDirectory() { return animeDirectory; }
     int EpisodeNumber() { return episodeNumber; }
-    std::wstring OriginalName() { return originalName; }
-    std::wstring OriginalNameWithPath() { return originalNameWithPath; }
+    std::string OriginalName() { return originalName; }
+    std::string OriginalNameWithPath() { return originalNameWithPath; }
     static int MaxEpisodeNumber() { return maxEpisodeNumber; }
 
     bool operator==(const File& f2) const { return this->originalName == f2.originalName; }
+    bool operator<(const File& f2) const { return this->originalName < f2.originalName; }
     void FindEpNumber(int offset);
 
-    File(std::wstring n) : originalNameWithPath{n}, originalName{n.substr(n.find_last_of('\\') + 1)}
+    File(std::string n) : originalNameWithPath{n}, originalName{n.substr(n.find_last_of('/') + 1)}
     {
     }
 };

@@ -185,6 +185,7 @@ uint_least8_t Menu_t::CheckKeyboard()
         if(spa() == SpecialAction_t::destroy)
             throw spa;
     }
+    return 0;
 }
 
 void Menu_t::MenuOption_t::Active(bool active)
@@ -257,8 +258,9 @@ void Menu_t::GoUpper()
 
 void Menu_t::Die()
 {
-    isAnyMenuActive--; // Jak wyjdzie zero to watek sie przerwie
-    pthread_join(thread, NULL);
+    if(--isAnyMenuActive == 0) // Jak wyjdzie zero to watek sie przerwie
+        pthread_join(thread, NULL);
+
     throw SpecialAction_t{SpecialAction_t::destroy};
 }
 

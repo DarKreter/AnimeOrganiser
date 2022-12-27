@@ -11,35 +11,32 @@ ent::Color errorColor = ent::darkRed, SIColor = ent::blue, userColor = ent::lime
            dataColor = ent::darkBlue;
 
 namespace file {
-wstring File::animeName = L"";
-wstring File::animeDirectory = L"";
+string File::animeName = "";
+string File::animeDirectory = "";
 int File::seasonNumber = 0;
 int File::maxEpisodeNumber = 0;
 
-std::wstring File::GetFileExtension()
-{
-    return originalName.substr(originalName.find_last_of('.'));
-}
+std::string File::GetFileExtension() { return originalName.substr(originalName.find_last_of('.')); }
 
-std::wstring File::NewNameWithoutExt()
+std::string File::NewNameWithoutExt()
 {
-    wostringstream s;
-    s << animeName << L" - s" << std::setw(2) << setfill(L'0') << seasonNumber << L"e" << setw(2)
-      << setfill(L'0') << episodeNumber;
+    ostringstream s;
+    s << animeName << " - s" << std::setw(2) << setfill('0') << seasonNumber << "e" << setw(2)
+      << setfill('0') << episodeNumber;
     return s.str();
 }
 
-std::wstring File::NewName()
+std::string File::NewName()
 {
-    wostringstream s;
-    s << animeName << L" - s" << std::setw(2) << setfill(L'0') << seasonNumber << L"e" << setw(2)
-      << setfill(L'0') << episodeNumber << GetFileExtension();
+    ostringstream s;
+    s << animeName << " - s" << std::setw(2) << setfill('0') << seasonNumber << "e" << setw(2)
+      << setfill('0') << episodeNumber << GetFileExtension();
     return s.str();
 }
 
-std::wstring File::NewNameWithPath() { return fm::GetExecutablePathW() + NewName(); }
+std::string File::NewNameWithPath() { return fm::GetExecutablePath() + NewName(); }
 
-void File::Configure(std::wstring aN, std::wstring aD, int sN)
+void File::Configure(std::string aN, std::string aD, int sN)
 {
     animeName = aN;
     animeDirectory = aD;
@@ -54,9 +51,9 @@ void File::FindEpNumber(int offset)
 
         for(int i = 0; i <= offset; i++) {
             // cout << i << "\t";
-            begPos = originalName.find_first_of(L"1234567890", endPos);
+            begPos = originalName.find_first_of("1234567890", endPos);
             // cout << begPos << "\t";
-            endPos = originalName.find_first_not_of(L"1234567890", begPos);
+            endPos = originalName.find_first_not_of("1234567890", begPos);
             // cout << endPos << "\n";
         }
 
@@ -74,14 +71,14 @@ void File::FindEpNumber(int offset)
     }
 }
 
-wstring File::GetAnimeName(wstring path)
+string File::GetAnimeName(string path)
 {
     string name;
     ent::ChangeColor(errorColor); // cout << endl;
 
     try {
         path.erase(path.length() - 1, 1);
-        path = path.substr(path.find_last_of('\\') + 1, string::npos);
+        path = path.substr(path.find_last_of('/') + 1, string::npos);
         string::size_type beg = path.find('[');
         string::size_type end = path.find(']');
 
@@ -96,15 +93,15 @@ wstring File::GetAnimeName(wstring path)
                 path.erase(find, std::end(path));
         }
 
-        path = sm::RemoveDoubleWSW(sm::RemoveWSBeginEndW(path));
+        path = sm::RemoveDoubleWS(sm::RemoveWSBeginEnd(path));
 
-        wstring animeName;
+        string animeName;
         ChangeColor(SIColor);
         cout << "Suggesting name of anime:" << endl
-             << "\t\'" << sm::WSTS(path) << "\'" << endl
+             << "\t\'" << path << "\'" << endl
              << "If the name is correct press ENTER, if not write your \"better\" name: ";
         ChangeColor(userColor);
-        getline(wcin, animeName);
+        getline(cin, animeName);
 
         if(animeName.empty())
             return path;
@@ -112,18 +109,18 @@ wstring File::GetAnimeName(wstring path)
             return animeName;
     }
     catch(...) {
-        wstring animeName;
+        string animeName;
 
         ChangeColor(SIColor);
         cout << "Enter the name of Anime to transmutation: ";
         ChangeColor(userColor);
-        getline(wcin, animeName);
+        getline(cin, animeName);
 
         return animeName;
     }
 }
 
-int File::GetSeasonNumber(wstring path)
+int File::GetSeasonNumber(string path)
 {
     int sN;
     ent::ChangeColor(errorColor); // cout << endl;

@@ -70,12 +70,14 @@ void CopyFileLog(std::string nameIn, std::string nameOUT, std::ostream& strumien
 
 void MoveFile(std::string nameIn, std::string nameOUT)
 {
-    string command = "mv -f \"" + nameIn + "\" \"" + nameOUT + "\"";
+    string command = "mv -f \"" + nameIn + "\" \"" + nameOUT + "\" 2> /dev/null";
     unsigned short error = system(command.c_str());
 
-    if(error)
+    if(error && error != 256)
         throw Error_t{"Error in moving file.\nFrom: " + nameIn + "\nTo: " + nameOUT +
                       "\nError log: " + to_string(error)};
+
+    cout << "File moved!\n";
 }
 
 void MoveFileLog(std::string nameIn, std::string nameOUT, std::ostream& strumien)
@@ -85,7 +87,7 @@ void MoveFileLog(std::string nameIn, std::string nameOUT, std::ostream& strumien
              << "TO:\t" << nameOUT << endl;
     usleep(LOG_SLEEP);
 
-    string command = "mv -f \"" + nameIn + "\" \"" + nameOUT + "\"";
+    string command = "mv -f \"" + nameIn + "\" \"" + nameOUT + "\" 2> /dev/null";
     unsigned short error = system(command.c_str());
     usleep(LOG_SLEEP);
 
@@ -129,12 +131,14 @@ void MoveFileLog(std::string nameIn, std::string nameOUT, std::ostream& strumien
 void RenameFile(std::string oldName, std::string newName)
 {
     string command = "mv \"" + oldName + "\" \"" +
-                     oldName.substr(0, oldName.find_last_of('/') + 1) + newName + "\"";
+                     oldName.substr(0, oldName.find_last_of('/') + 1) + newName + "\" 2> /dev/null";
     unsigned short error = system(command.c_str());
 
-    if(error)
-        throw Error_t{"Error in changing file name.\nFile: " + oldName + "\nNew name: " + newName +
+    if(error && error != 256)
+        throw Error_t{"Error in moving file.\nFrom: " + oldName + "\nTo: " + newName +
                       "\nError log: " + to_string(error)};
+
+    cout << "File moved!\n";
 }
 
 void RenameFileLog(std::string oldName, std::string newName, std::ostream& strumien)
@@ -145,7 +149,7 @@ void RenameFileLog(std::string oldName, std::string newName, std::ostream& strum
     usleep(LOG_SLEEP);
 
     string command = "mv \"" + oldName + "\" \"" +
-                     oldName.substr(0, oldName.find_last_of('/') + 1) + newName + "\"";
+                     oldName.substr(0, oldName.find_last_of('/') + 1) + newName + "\" > /dev/null";
     unsigned short error = system(command.c_str());
     usleep(LOG_SLEEP);
 

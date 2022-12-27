@@ -18,7 +18,6 @@ using file::Subtitle;
 
 int main(int argc, char* argv[])
 {
-
 #ifdef LOG_VERSION
     wofstream log("log.k8d");
     struct L {
@@ -30,14 +29,13 @@ int main(int argc, char* argv[])
 
     if(argc == 5) /// Jesli nastapilo wywolanie odgorne przekazujemy dane klasie
     {
-        File::Configure(sm::STWS(argv[1]), sm::STWS(argv[2]),
-                        File::GetSeasonNumber(sm::STWS(argv[2])));
+        File::Configure(argv[1], argv[2], File::GetSeasonNumber(argv[2]));
         Episode::Offset(stoi(argv[3]));
         Subtitle::Offset(stoi(argv[4]));
     }
     else /// Jesli musimy te dane sami pobrac
     {
-        wstring animeName;
+        string animeName;
 
         ChangeColor(errorColor);
         cout << "Number of passed arguments is invalid! [";
@@ -48,17 +46,18 @@ int main(int argc, char* argv[])
         ChangeColor(SIColor);
         cout << "Initialization of manual input of data [ ]\b\b";
         ChangeColor(dataColor);
-        ent::Fan(11, 120);
+        ent::Fan(2, 120'000);
         ChangeColor(dataColor);
         cout << "SUCCESS!";
         ChangeColor(SIColor);
         cout << "]" << endl << endl;
 
-        animeName = File::GetAnimeName(fm::GetExecutablePathW());
+        animeName = File::GetAnimeName(fm::GetExecutablePath());
         // Mamy juz od uzytkownika nazwe anime
         string temp;
         ChangeColor(SIColor);
         cout << "Enter the offset for episodes: ";
+        Episode::Offset(1); // TODO: remove
     back1:
         ChangeColor(userColor);
         getline(cin, temp);
@@ -87,8 +86,8 @@ int main(int argc, char* argv[])
 
         // Bierzemy z GetExecutablePath sciezke oraz GetSeasonNumber razem z wylapywaniem bledow
         // pobiera numer sezonu
-        File::Configure(animeName, fm::GetExecutablePathW(),
-                        File::GetSeasonNumber(fm::GetExecutablePathW()));
+        File::Configure(animeName, fm::GetExecutablePath(),
+                        File::GetSeasonNumber(fm::GetExecutablePath()));
 
         // cout << Episode::animeName << endl;
         // cout << Episode::animeDirectory << endl;
@@ -99,12 +98,14 @@ int main(int argc, char* argv[])
 
     vector<Episode> episodes;
     vector<Subtitle> subtitles;
-    for(auto dir : Subtitle::folders)
-        fm::ReadDirectoryWS(File::GetDirectory() + sm::STWS(dir) + L"\\", subtitles,
-                            Subtitle::Extensions(), false, true);
 
-    fm::ReadDirectoryWS(File::GetDirectory(), subtitles, Subtitle::Extensions(), false, true);
-    fm::ReadDirectoryWS(File::GetDirectory(), episodes, Episode::Extensions(), false, true);
+    for(auto dir : Subtitle::folders) {
+        fm::ReadDirectory(File::GetDirectory() + dir + "/", subtitles, Subtitle::Extensions(),
+                          false, true);
+    }
+
+    fm::ReadDirectory(File::GetDirectory(), subtitles, Subtitle::Extensions(), false, true);
+    fm::ReadDirectory(File::GetDirectory(), episodes, Episode::Extensions(), false, true);
 
     if(episodes.empty()) {
         ChangeColor(errorColor);
@@ -120,8 +121,8 @@ int main(int argc, char* argv[])
     }
 
     // cout << "UWAGA:" << endl;
-    // for (auto& x : subtitles)
-    //	cout << sm::WSTS(x.OriginalName()) << endl;
+    // for(auto& x : subtitles)
+    //     cout << x.OriginalName() << endl;
     // cout << "UWAGA:" << endl;
 
     for(auto& ep : episodes)
@@ -136,12 +137,12 @@ int main(int argc, char* argv[])
         if(ep.episodeNumber == -1)
             ep.episodeNumber = File::MaxEpisodeNumber() + 1;
 
-    /*cout << "maxEpisodeNumber = " << File::maxEpisodeNumber << endl;
-    for (auto& sub : subtitles)
-            cout << sub.episodeNumber << " - " << sub.originalName << endl;
-    cout << "-----------------------" << endl;
-    for (auto& ep : episodes)
-            cout << ep.episodeNumber << " - " << ep.originalName << endl;*/
+    // cout << "maxEpisodeNumber = " << File::MaxEpisodeNumber() << endl;
+    // for(auto& sub : subtitles)
+    //     cout << sub.episodeNumber << " - " << sub.OriginalName() << endl;
+    // cout << "-----------------------" << endl;
+    // for(auto& ep : episodes)
+    //     cout << ep.episodeNumber << " - " << ep.OriginalName() << endl;
     // wszystkie episode i subtitle mają już w episodeNumber odpowiedni numer
     // Teraz trzeba je polaczyc w dwuwyymiarowej tablicy ktora ma pierwszy rozmiar maxEpisodeNumber
     // + 1 I potem przelecenie wszyystkiego zmieniajac nazwe albo robiac okienka wyboru (no ogolnie
@@ -163,14 +164,13 @@ int main(int argc, char* argv[])
         subtitlesSorted[sub.episodeNumber].push_back(std::move(sub));
 
     // cout << "maxEpisodeNumber = " << File::MaxEpisodeNumber() << endl;
-    // for (unsigned int i = 0; i < episodesSorted.size(); i++)
-    //{
-    //	cout << "\t\t\t" << i << endl;
-    //	for (auto& sub : subtitlesSorted[i])
-    //		cout << sub.EpisodeNumber() << " - " << sm::WSTS(sub.OriginalName()) << endl;
-    //	for (auto& ep : episodesSorted[i])
-    //		cout << ep.EpisodeNumber() << " - " << sm::WSTS(ep.OriginalName()) << endl;
-    //	cout << endl;
+    // for(unsigned int i = 0; i < episodesSorted.size(); i++) {
+    //     cout << "\t\t\t" << i << endl;
+    //     for(auto& sub : subtitlesSorted[i])
+    //         cout << sub.EpisodeNumber() << " - " << sub.OriginalName() << endl;
+    //     for(auto& ep : episodesSorted[i])
+    //         cout << ep.EpisodeNumber() << " - " << ep.OriginalName() << endl;
+    //     cout << endl;
     // }
 
     menu::Menu_t* meni;
@@ -189,15 +189,15 @@ int main(int argc, char* argv[])
             // cout << episodesSorted[i][0].originalNameWithPath << endl;
             // cout << episodesSorted[i][0].NewName() << endl;
 #ifdef LOG_VERSION
-            fm::MoveFileWLog(subtitlesSorted[i][0].OriginalNameWithPath(),
-                             subtitlesSorted[i][0].NewName(), log);
-            fm::RenameFileWLog(episodesSorted[i][0].OriginalNameWithPath(),
-                               episodesSorted[i][0].NewName(), log);
+            fm::MoveFileLog(subtitlesSorted[i][0].OriginalNameWithPath(),
+                            subtitlesSorted[i][0].NewName(), log);
+            fm::RenameFileLog(episodesSorted[i][0].OriginalNameWithPath(),
+                              episodesSorted[i][0].NewName(), log);
 #else
-            fm::MoveFileW(subtitlesSorted[i][0].OriginalNameWithPath(),
-                          subtitlesSorted[i][0].NewName());
-            fm::RenameFileW(episodesSorted[i][0].OriginalNameWithPath(),
-                            episodesSorted[i][0].NewName());
+            fm::MoveFile(subtitlesSorted[i][0].OriginalNameWithPath(),
+                         subtitlesSorted[i][0].NewName());
+            fm::RenameFile(episodesSorted[i][0].OriginalNameWithPath(),
+                           episodesSorted[i][0].NewName());
 #endif
             // Zmiana nazwy odcinka anime i napisow plus przeniesienie napisow do lokalizacji
             // odcinka
@@ -224,8 +224,8 @@ int main(int argc, char* argv[])
         }
         else if(subtitlesSorted[i].size() == 0) // DONE
         {
-            cout << "Error! Couldn't find subtitle number " << i << " even though there is episode!"
-                 << endl;
+            cout << "Error! Couldn't find subtitle number " << i
+                 << " even though there is episode !" << endl;
 
             // Przekopiowanie wszystkich napisow jakie byly bez pary do bazy napisow z ostatniego
             // odcinka
@@ -248,10 +248,10 @@ int main(int argc, char* argv[])
                         menu::ClearScreen();
                         meni->Die();
                     };
-                    x.push_back({sm::WSTS(episodesSorted[i][j].OriginalName()), lambda});
+                    x.push_back({episodesSorted[i][j].OriginalName(), lambda});
                 }
 
-                x.push_back({"Nani?! All of them are wrong?! MASAKA!", [&meni]() {
+                x.push_back({"Nani?! All of them are wrong? !MASAKA !", [&meni]() {
                                  menu::ClearScreen();
                                  meni->Die();
                              }});
@@ -259,7 +259,7 @@ int main(int argc, char* argv[])
                 meni = menu::Menu_t::CreateMenu(
                     2, 1, 55,
                     "Found too much episodes and subtitles with number " + to_string(i) +
-                        "!\nFirstly please choose which episode is correct!",
+                        "!\nFirstly please choose which episode is correct !",
                     x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS,
                     DEFAULT_IN_KEYBOARD_KEYS, {}, DEFAULT_MENU_COLOR_SET);
 
@@ -275,7 +275,7 @@ int main(int argc, char* argv[])
                         menu::ClearScreen();
                         meni->Die();
                     };
-                    x.push_back({sm::WSTS(subtitlesSorted[i][j].OriginalName()), lambda});
+                    x.push_back({subtitlesSorted[i][j].OriginalName(), lambda});
                 }
 
                 x.push_back({"Who downloaded this subtitles?! SKIP!!!", [&meni]() {
@@ -286,7 +286,7 @@ int main(int argc, char* argv[])
                 meni = menu::Menu_t::CreateMenu(
                     2, 1, 55,
                     "Found too much episodes and subtitles with number " + to_string(i) +
-                        "!\nNow please choose which subtitle is correct!",
+                        "!\nNow please choose which subtitle is correct !",
                     x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS,
                     DEFAULT_IN_KEYBOARD_KEYS, {}, DEFAULT_MENU_COLOR_SET);
 
@@ -299,15 +299,15 @@ int main(int argc, char* argv[])
             if(choosen1 != -1 && choosen2 != -1) // Jesli cos zostalo wybrane
             {
 #ifdef LOG_VERSION
-                fm::MoveFileWLog(subtitlesSorted[i][choosen2].OriginalNameWithPath(),
-                                 subtitlesSorted[i][choosen2].NewName(), log);
-                fm::RenameFileWLog(episodesSorted[i][choosen1].OriginalNameWithPath(),
-                                   episodesSorted[i][choosen1].NewName(), log);
+                fm::MoveFileLog(subtitlesSorted[i][choosen2].OriginalNameWithPath(),
+                                subtitlesSorted[i][choosen2].NewName(), log);
+                fm::RenameFileLog(episodesSorted[i][choosen1].OriginalNameWithPath(),
+                                  episodesSorted[i][choosen1].NewName(), log);
 #else
-                fm::MoveFileW(subtitlesSorted[i][choosen2].OriginalNameWithPath(),
-                              subtitlesSorted[i][choosen2].NewName());
-                fm::RenameFileW(episodesSorted[i][choosen1].OriginalNameWithPath(),
-                                episodesSorted[i][choosen1].NewName());
+                fm::MoveFile(subtitlesSorted[i][choosen2].OriginalNameWithPath(),
+                             subtitlesSorted[i][choosen2].NewName());
+                fm::RenameFile(episodesSorted[i][choosen1].OriginalNameWithPath(),
+                               episodesSorted[i][choosen1].NewName());
 #endif
 
                 auto newEnd1 = remove(begin(subtitlesSorted[i]), end(subtitlesSorted[i]),
@@ -327,7 +327,8 @@ int main(int argc, char* argv[])
 
             // cout << "Za duzo napisow i odcinkow dla " << i << endl;
         }
-        else if(episodesSorted[i].size() > 1) // DONE
+        else if(episodesSorted[i].size() > 1)
+        // DONE
         {
             vector<pair<string, menu::WskaznikNaFunkcjeMenu>> x;
 
@@ -339,7 +340,7 @@ int main(int argc, char* argv[])
                     menu::ClearScreen();
                     meni->Die();
                 };
-                x.push_back({sm::WSTS(episodesSorted[i][j].OriginalName()), lambda});
+                x.push_back({episodesSorted[i][j].OriginalName(), lambda});
             }
 
             x.push_back({"Nani?! All of them are wrong?! MASAKA!", [&meni]() {
@@ -349,7 +350,7 @@ int main(int argc, char* argv[])
 
             meni = menu::Menu_t::CreateMenu(2, 1, 55,
                                             "Found too much episodes with number " + to_string(i) +
-                                                "!\nPlease choose which one is correct!",
+                                                "!\nPlease choose which one is correct !",
                                             x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS,
                                             DEFAULT_IN_KEYBOARD_KEYS, {}, DEFAULT_MENU_COLOR_SET);
 
@@ -361,15 +362,15 @@ int main(int argc, char* argv[])
             if(choosen != -1) // Jesli cos zostalo wybrane
             {
 #ifdef LOG_VERSION
-                fm::MoveFileWLog(subtitlesSorted[i][0].OriginalNameWithPath(),
-                                 subtitlesSorted[i][0].NewName(), log);
-                fm::RenameFileWLog(episodesSorted[i][choosen].OriginalNameWithPath(),
-                                   episodesSorted[i][choosen].NewName(), log);
+                fm::MoveFileLog(subtitlesSorted[i][0].OriginalNameWithPath(),
+                                subtitlesSorted[i][0].NewName(), log);
+                fm::RenameFileLog(episodesSorted[i][choosen].OriginalNameWithPath(),
+                                  episodesSorted[i][choosen].NewName(), log);
 #else
-                fm::MoveFileW(subtitlesSorted[i][0].OriginalNameWithPath(),
-                              subtitlesSorted[i][0].NewName());
-                fm::RenameFileW(episodesSorted[i][choosen].OriginalNameWithPath(),
-                                episodesSorted[i][choosen].NewName());
+                fm::MoveFile(subtitlesSorted[i][0].OriginalNameWithPath(),
+                             subtitlesSorted[i][0].NewName());
+                fm::RenameFile(episodesSorted[i][choosen].OriginalNameWithPath(),
+                               episodesSorted[i][choosen].NewName());
 #endif
 
                 auto newEnd = remove(begin(episodesSorted[i]), end(episodesSorted[i]),
@@ -392,7 +393,7 @@ int main(int argc, char* argv[])
                     menu::ClearScreen();
                     meni->Die();
                 };
-                x.push_back({sm::WSTS(subtitlesSorted[i][j].OriginalName()), lambda});
+                x.push_back({subtitlesSorted[i][j].OriginalName(), lambda});
             }
 
             x.push_back({"Who downloaded this subtitles?! SKIP!!!", [&meni]() {
@@ -415,15 +416,15 @@ int main(int argc, char* argv[])
             if(choosen != -1) // Jesli cos zostalo wybrane
             {
 #ifdef LOG_VERSION
-                fm::MoveFileWLog(subtitlesSorted[i][choosen].OriginalNameWithPath(),
-                                 subtitlesSorted[i][choosen].NewName(), log);
-                fm::RenameFileWLog(episodesSorted[i][0].OriginalNameWithPath(),
-                                   episodesSorted[i][0].NewName(), log);
+                fm::MoveFileLog(subtitlesSorted[i][choosen].OriginalNameWithPath(),
+                                subtitlesSorted[i][choosen].NewName(), log);
+                fm::RenameFileLog(episodesSorted[i][0].OriginalNameWithPath(),
+                                  episodesSorted[i][0].NewName(), log);
 #else
-                fm::MoveFileW(subtitlesSorted[i][choosen].OriginalNameWithPath(),
-                              subtitlesSorted[i][choosen].NewName());
-                fm::RenameFileW(episodesSorted[i][0].OriginalNameWithPath(),
-                                episodesSorted[i][0].NewName());
+                fm::MoveFile(subtitlesSorted[i][choosen].OriginalNameWithPath(),
+                             subtitlesSorted[i][choosen].NewName());
+                fm::RenameFile(episodesSorted[i][0].OriginalNameWithPath(),
+                               episodesSorted[i][0].NewName());
 #endif
 
                 auto newEnd = remove(begin(subtitlesSorted[i]), end(subtitlesSorted[i]),
@@ -447,10 +448,10 @@ int main(int argc, char* argv[])
                 menu::ClearScreen();
                 meni->Die();
             };
-            x.push_back({sm::WSTS(subtitlesSorted[i][j].OriginalName()), lambda});
+            x.push_back({subtitlesSorted[i][j].OriginalName(), lambda});
         }
 
-        x.push_back({"Who downloaded this subtitles?! SKIP!!!", [&meni]() {
+        x.push_back({"Who downloaded this subtitles? !SKIP !!!", [&meni]() {
                          menu::ClearScreen();
                          meni->Die();
                      }});
@@ -458,13 +459,17 @@ int main(int argc, char* argv[])
         x.push_back({"I've seen Enough. I'm Satisfied.", [&meni]() {
                          menu::ClearScreen();
                          ent::ChangeColor(SIColor);
-                         cout << "SUCCESS!" << endl;
-                         _getch();
-                         exit(0);
+                         getchar();
+                         try {
+                             meni->Die();
+                         }
+                         catch(const menu::Menu_t::SpecialAction_t& e) {
+                             exit(0);
+                         }
                      }});
 
         meni = menu::Menu_t::CreateMenu(
-            2, 1, 55, "Choose subtitle file for this episode:\n" + sm::WSTS(ep.OriginalName()), x,
+            2, 1, 55, "Choose subtitle file for this episode:\n" + ep.OriginalName(), x,
             DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS, DEFAULT_IN_KEYBOARD_KEYS, {},
             DEFAULT_MENU_COLOR_SET);
 
@@ -477,18 +482,18 @@ int main(int argc, char* argv[])
         {
 
 #ifdef LOG_VERSION
-            fm::MoveFileWLog(subtitlesSorted[i][choosen].OriginalNameWithPath(),
-                             ep.OriginalNameWithPath().replace(
-                                 ep.OriginalNameWithPath().size() - 4, 4,
-                                 subtitlesSorted[i][choosen].OriginalName().substr(
-                                     subtitlesSorted[i][choosen].OriginalName().size() - 4)),
-                             log);
+            fm::MoveFileLog(subtitlesSorted[i][choosen].OriginalNameWithPath(),
+                            ep.OriginalNameWithPath().replace(
+                                ep.OriginalNameWithPath().size() - 4, 4,
+                                subtitlesSorted[i][choosen].OriginalName().substr(
+                                    subtitlesSorted[i][choosen].OriginalName().size() - 4)),
+                            log);
 #else
-            fm::MoveFileW(subtitlesSorted[i][choosen].OriginalNameWithPath(),
-                          ep.OriginalNameWithPath().replace(
-                              ep.OriginalNameWithPath().size() - 4, 4,
-                              subtitlesSorted[i][choosen].OriginalName().substr(
-                                  subtitlesSorted[i][choosen].OriginalName().size() - 4)));
+            fm::MoveFile(subtitlesSorted[i][choosen].OriginalNameWithPath(),
+                         ep.OriginalNameWithPath().replace(
+                             ep.OriginalNameWithPath().size() - 4, 4,
+                             subtitlesSorted[i][choosen].OriginalName().substr(
+                                 subtitlesSorted[i][choosen].OriginalName().size() - 4)));
 #endif
             remove(begin(subtitlesSorted[i]), end(subtitlesSorted[i]), subtitlesSorted[i][choosen]);
             // fm::ChangeName(ep.OriginalNameWithPath(), ep.NewName());
@@ -498,7 +503,8 @@ int main(int argc, char* argv[])
     ent::ChangeColor(SIColor);
     cout << endl << "SUCCESS" << endl;
 
-    system("Pause");
+    cout << "Press any key to continue" << endl;
+    cin.get();
 
     return 0;
 }

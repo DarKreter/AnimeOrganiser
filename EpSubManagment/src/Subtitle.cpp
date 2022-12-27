@@ -1,9 +1,9 @@
 #include "Subtitle.hpp"
 
 namespace file {
-std::wstring Subtitle::NewName()
+std::string Subtitle::NewName()
 {
-    return File::NewNameWithoutExt() + L".pl.srt"; // + GetFileExtension(); //TAK SIE DZIEJE BO PLEX
+    return File::NewNameWithoutExt() + ".pl.srt"; // + GetFileExtension(); //TAK SIE DZIEJE BO PLEX
                                                    // MUSI MIEC .SRT ZEBY POBIERAC JE
 }
 } // namespace file
