@@ -10,7 +10,7 @@ set(CPU_OPTIONS -Werror -Wall -Wextra -pedantic -ffunction-sections -fdata-secti
 add_compile_options(${CPU_OPTIONS})
 
 add_subdirectory(Entertainment)
-# add_subdirectory(StringManagment)
+add_subdirectory(StringManagment)
 # add_subdirectory(FilesManagment)
 # add_subdirectory(Menu)
 # add_subdirectory(EpisodeSubtitleManagment)

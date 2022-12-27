@@ -3,9 +3,8 @@
 
 #include <locale>
 #include <string>
-#include <tchar.h>
+// #include <tchar.h>
 #include <vector>
-
 
 namespace sm {
 /**
@@ -16,12 +15,12 @@ std::string WSTS(std::wstring const& text); // WStringToString
 /**
         Zmienia stringa na wstringa
 */
-std::wstring STWS(std::string const& text); // StringToWtring
+std::wstring STWS(std::string const& text); // StringToString
 
 /*
         Zmienia stringa na TCHAR*
 */
-const TCHAR* S2TCharP(std::string); // stringToTCharPointer
+// const TCHAR* S2TCharP(std::string); // stringToTCharPointer
 
 /*
         Usuwa biale znaki z poczatku napisu

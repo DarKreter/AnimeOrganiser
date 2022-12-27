@@ -1,9 +1,9 @@
-#include "StringManagment.h"
+#include "StringManagment.hpp"
 
 using namespace std;
 
 namespace sm {
-std::string WSTS(std::wstring const& text) // WStringToWtring
+std::string WSTS(std::wstring const& text) // WStringToString
 {
     std::locale const loc("");
     wchar_t const* from = text.c_str();
@@ -18,11 +18,11 @@ std::wstring STWS(std::string const& text) // StringToWtring
     return wstring(begin(text), end(text));
 }
 
-const TCHAR* S2TCharP(std::string s) // stringToTCharPointer
-{
-    std::basic_string<TCHAR> converted(s.begin(), s.end());
-    return converted.c_str();
-}
+// const TCHAR* S2TCharP(std::string s) // stringToTCharPointer
+// {
+//     std::basic_string<TCHAR> converted(s.begin(), s.end());
+//     return converted.c_str();
+// }
 
 std::string RemoveWSBegin(const std::string& s, const std::string ws)
 {
