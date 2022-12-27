@@ -1,17 +1,41 @@
 #include "FilesManagment.hpp"
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 using namespace std;
 
 namespace fm {
-// void CopyFile(std::string nameIn, std::string nameOUT)
-// {
-//     string command = "copy /B /-Y /Z \"" + nameIn + "\" \"" + nameOUT + "\"";
-//     unsigned short error = system(command.c_str());
+void CopyFile(std::string nameIn, std::string nameOUT)
+{
+    string command = "cp -a \"" + nameIn + "\" \"" + nameOUT + "\"";
+    unsigned short error = system(command.c_str());
 
-//     if(error)
-//         throw Error_t{"Error in copying file.\nFrom: " + nameIn + "\nTo: " + nameOUT +
-//                       "\nError log: " + to_string(error)};
-// }
+    if(error)
+        throw Error_t{"Error in copying file.\nFrom: " + nameIn + "\nTo: " + nameOUT +
+                      "\nError log: " + to_string(error)};
+}
+
+void CopyFileLog(std::string nameIn, std::string nameOUT, std::ostream& strumien)
+{
+    strumien << "-------------COPY FILE-------------" << endl
+             << "FROM:\t" << nameIn << endl
+             << "TO:\t" << nameOUT << endl;
+    usleep(LOG_SLEEP);
+
+    string command = "cp -a \"" + nameIn + "\" \"" + nameOUT + "\"";
+    unsigned short error = system(command.c_str());
+    usleep(LOG_SLEEP);
+
+    if(error)
+        strumien << "ERROR: " << error << endl;
+    else
+        strumien << "SUCCESS!" << endl;
+    usleep(LOG_SLEEP);
+}
 
 // void CopyFileW(std::wstring nameIn, std::wstring nameOUT)
 // {
@@ -44,33 +68,33 @@ namespace fm {
 //     Sleep(LOG_SLEEP);
 // }
 
-// void CopyFileLog(std::string nameIn, std::string nameOUT, std::ostream& strumien)
-// {
-//     strumien << "-------------COPY FILE-------------" << endl
-//              << "FROM:\t" << nameIn << endl
-//              << "TO:\t" << nameOUT << endl;
-//     Sleep(LOG_SLEEP);
+void MoveFile(std::string nameIn, std::string nameOUT)
+{
+    string command = "mv -f \"" + nameIn + "\" \"" + nameOUT + "\"";
+    unsigned short error = system(command.c_str());
 
-//     string command = "copy /B /-Y /Z \"" + nameIn + "\" \"" + nameOUT + "\"";
-//     unsigned short error = system(command.c_str());
-//     Sleep(LOG_SLEEP);
+    if(error)
+        throw Error_t{"Error in moving file.\nFrom: " + nameIn + "\nTo: " + nameOUT +
+                      "\nError log: " + to_string(error)};
+}
 
-//     if(error)
-//         strumien << "ERROR: " << error << endl;
-//     else
-//         strumien << "SUCCESS!" << endl;
-//     Sleep(LOG_SLEEP);
-// }
+void MoveFileLog(std::string nameIn, std::string nameOUT, std::ostream& strumien)
+{
+    strumien << "-------------MOVE FILE-------------" << endl
+             << "FROM:\t" << nameIn << endl
+             << "TO:\t" << nameOUT << endl;
+    usleep(LOG_SLEEP);
 
-// void MoveFile(std::string nameIn, std::string nameOUT)
-// {
-//     string command = "move /-Y \"" + nameIn + "\" \"" + nameOUT + "\"";
-//     unsigned short error = system(command.c_str());
+    string command = "mv -f \"" + nameIn + "\" \"" + nameOUT + "\"";
+    unsigned short error = system(command.c_str());
+    usleep(LOG_SLEEP);
 
-//     if(error)
-//         throw Error_t{"Error in moving file.\nFrom: " + nameIn + "\nTo: " + nameOUT +
-//                       "\nError log: " + to_string(error)};
-// }
+    if(error)
+        strumien << "ERROR: " << error << endl;
+    else
+        strumien << "SUCCESS!" << endl;
+    usleep(LOG_SLEEP);
+}
 
 // void MoveFileW(std::wstring nameIn, std::wstring nameOUT)
 // {
@@ -101,41 +125,45 @@ namespace fm {
 //         strumien << "SUCCESS!" << endl;
 //     Sleep(LOG_SLEEP);
 // }
-// void MoveFileLog(std::string nameIn, std::string nameOUT, std::ostream& strumien)
-// {
-//     strumien << "-------------MOVE FILE-------------" << endl
-//              << "FROM:\t" << nameIn << endl
-//              << "TO:\t" << nameOUT << endl;
-//     Sleep(LOG_SLEEP);
 
-//     string command = "move /-Y \"" + nameIn + "\" \"" + nameOUT + "\"";
-//     unsigned short error = system(command.c_str());
-//     Sleep(LOG_SLEEP);
+void RenameFile(std::string oldName, std::string newName)
+{
+    string command = "mv \"" + oldName + "\" \"" +
+                     oldName.substr(0, oldName.find_last_of('/') + 1) + newName + "\"";
+    unsigned short error = system(command.c_str());
 
-//     if(error)
-//         strumien << "ERROR: " << error << endl;
-//     else
-//         strumien << "SUCCESS!" << endl;
-//     Sleep(LOG_SLEEP);
-// }
+    if(error)
+        throw Error_t{"Error in changing file name.\nFile: " + oldName + "\nNew name: " + newName +
+                      "\nError log: " + to_string(error)};
+}
 
-// void RenameFile(std::string oldName, std::string newName)
-// {
-//     string command = "rename \"" + oldName + "\" \"" + newName + "\"";
-//     unsigned short error = system(command.c_str());
+void RenameFileLog(std::string oldName, std::string newName, std::ostream& strumien)
+{
+    strumien << "-------------RENAME FILE-------------" << endl
+             << "File : " << oldName << endl
+             << "New name : " << newName << endl;
+    usleep(LOG_SLEEP);
 
-//     if(error)
-//         throw Error_t{"Error in changing file name.\nFile: " + oldName + "\nNew name: " + newName
-//         +
-//                       "\nError log: " + to_string(error)};
-// }
+    string command = "mv \"" + oldName + "\" \"" +
+                     oldName.substr(0, oldName.find_last_of('/') + 1) + newName + "\"";
+    unsigned short error = system(command.c_str());
+    usleep(LOG_SLEEP);
+
+    if(error)
+        strumien << "ERROR: " << error << endl;
+    else
+        strumien << "SUCCESS!" << endl;
+    usleep(LOG_SLEEP);
+}
+
 // void RenameFileW(std::wstring oldName, std::wstring newName)
 // {
 //     wstring command = L"rename \"" + oldName + L"\" \"" + newName + L"\"";
 //     unsigned short error = _wsystem(command.c_str());
 
 //     if(error) {
-//         string err = sm::WSTS(L"Error in changing file name.\nFile: " + oldName + L"\nNew name: "
+//         string err = sm::WSTS(L"Error in changing file name.\nFile: " + oldName + L"\nNew
+//         name: "
 //         +
 //                               newName + L"\nError log: ");
 //         err += to_string(error);
@@ -161,56 +189,38 @@ namespace fm {
 //     Sleep(LOG_SLEEP);
 // }
 
-// void RenameFileLog(std::string oldName, std::string newName, std::ostream& strumien)
-// {
-//     strumien << "-------------RENAME FILE-------------" << endl
-//              << "File : " << oldName << endl
-//              << "New name : " << newName << endl;
-//     Sleep(LOG_SLEEP);
+std::string ReadFile(std::string name, const unsigned long long rozmiar)
+{
+    std::fstream file;
+    file.open(name.c_str(), std::ios::in | std::ios::binary);
+    if(!file.good())
+        throw Error_t{"Blad otwarcia pliku: " + name + " do czytania!"};
 
-//     string command = "rename \"" + oldName + "\" \"" + newName + "\"";
-//     unsigned short error = system(command.c_str());
-//     Sleep(LOG_SLEEP);
+    char* tab = new char[rozmiar];
+    file.read(tab, rozmiar);
+    std::streamsize gcount = file.gcount();
 
-//     if(error)
-//         strumien << "ERROR: " << error << endl;
-//     else
-//         strumien << "SUCCESS!" << endl;
-//     Sleep(LOG_SLEEP);
-// }
+    if(gcount == rozmiar)
+        throw Error_t{"Nie udalo sie wczytac calego pliku!\n Jego rozmiar jest wiekszy niz: " +
+                      std::to_string(rozmiar)};
 
-// std::string ReadFile(std::string name, const unsigned long long rozmiar)
-// {
-//     std::fstream file;
-//     file.open(name.c_str(), std::ios::in | std::ios::binary);
-//     if(!file.good())
-//         throw Error_t{"Blad otwarcia pliku: " + name + " do czytania!"};
+    std::string temp(tab, gcount);
 
-//     char* tab = new char[rozmiar];
-//     file.read(tab, rozmiar);
-//     std::streamsize gcount = file.gcount();
+    delete[] tab;
 
-//     if(gcount == rozmiar)
-//         throw Error_t{"Nie udalo sie wczytac calego pliku!\n Jego rozmiar jest wiekszy niz: " +
-//                       std::to_string(rozmiar)};
+    return temp;
+}
 
-//     std::string temp(tab, gcount);
+void MakeFile(std::string name, std::string data)
+{
+    std::fstream file;
+    file.open(name.c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
+    if(!file.good())
+        throw Error_t{"Blad stworzenia pliku " + name + " !"};
 
-//     delete[] tab;
-
-//     return temp;
-// }
-
-// void MakeFile(std::string name, std::string data)
-// {
-//     std::fstream file;
-//     file.open(name.c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
-//     if(!file.good())
-//         throw Error_t{"Blad stworzenia pliku " + name + " !"};
-
-//     file.write(data.c_str(), data.size());
-//     file.close();
-// }
+    file.write(data.c_str(), data.size());
+    file.close();
+}
 
 // static std::string WSTS(std::wstring const& text) // WStringToWtring
 // {
@@ -266,17 +276,25 @@ bool FilesFilter(const wstring& s,
     return true; // Jesli nie byla zadnego z powyzszych usuwamy
 }
 
-// std::string GetExecutablePath()
-// {
-//     wchar_t buffer[MAX_PATH];
-//     GetModuleFileName(NULL, buffer, MAX_PATH);
+std::string exec(const char* cmd)
+{
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if(!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
 
-//     wstring ws(buffer);
-
-//     string temp = string(ws.begin(), ws.end());
-//     string::size_type pos = temp.find_last_of('\\');
-//     return temp.substr(0, pos + 1);
-// }
+std::string GetExecutablePath()
+{
+    string temp = exec("pwd");
+    return temp.substr(0, temp.length() - 1) + '/'; // cut new line from the end
+}
 
 // std::wstring GetExecutablePathW()
 // {
