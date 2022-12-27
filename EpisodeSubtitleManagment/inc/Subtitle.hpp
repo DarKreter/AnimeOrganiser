@@ -1,7 +1,7 @@
 #ifndef SUBTITLE_H
 #define SUBTITLE_H
 
-#include "../File/File.h"
+#include "File.hpp"
 #include <vector>
 
 namespace file {

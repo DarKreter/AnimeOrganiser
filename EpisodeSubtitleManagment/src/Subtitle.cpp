@@ -1,4 +1,4 @@
-#include "Subtitle.h"
+#include "Subtitle.hpp"
 
 namespace file {
 std::wstring Subtitle::NewName()

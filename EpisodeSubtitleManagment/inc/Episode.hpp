@@ -1,7 +1,7 @@
 #ifndef EPISODE_H
 #define EPISODE_H
 
-#include "../File/File.h"
+#include "File.hpp"
 #include <vector>
 
 namespace file {

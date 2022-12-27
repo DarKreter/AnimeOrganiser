@@ -1,13 +1,12 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "Entertainment.h"
+#include "Entertainment.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
-
 
 #define EPISODE_DELAY 0
 extern ent::Color errorColor, SIColor, userColor, dataColor;

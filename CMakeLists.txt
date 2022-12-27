@@ -18,7 +18,9 @@ add_subdirectory(Menu)
 
 add_subdirectory(StringManagment)
 add_subdirectory(FilesManagment)
+
+add_subdirectory(EpisodeSubtitleManagment)
+
 add_subdirectory(Testy)
 
-# add_subdirectory(EpisodeSubtitleManagment)
 # add_subdirectory(Anime Organiser HQ)

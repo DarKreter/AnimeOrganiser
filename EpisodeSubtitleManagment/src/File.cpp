@@ -1,9 +1,8 @@
-#include "File.h"
-#include "Entertainment.h"
-#include "FilesManagment.h"
-#include "StringManagment.h"
+#include "File.hpp"
+#include "Entertainment.hpp"
+#include "FilesManagment.hpp"
+#include "StringManagment.hpp"
 #include <algorithm>
-
 
 using namespace std;
 using file::File;

@@ -1,4 +1,4 @@
-set(DEPENDENCIES_LIST FilesManagment StringManagment Menu Threads::Threads)
+set(DEPENDENCIES_LIST FilesManagment StringManagment Menu EpisodeSubtitleManagment Threads::Threads)
 
 add_executable(firmware main.cpp)
 
