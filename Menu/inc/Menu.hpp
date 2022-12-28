@@ -1,7 +1,9 @@
 ﻿#ifndef MENU_H
 #define MENU_H
 
+#include "Entertainment.hpp"
 #include <forward_list>
+#include <fstream>
 #include <functional>
 #include <iostream>
 #include <queue>
@@ -20,10 +22,7 @@
 #include <pthread.h>
 #include <termios.h>
 #include <unistd.h>
-
 #endif
-
-#include <fstream>
 
 #define DEFAULT_UP_KEYBOARD_KEYS                                                                   \
     {                                                                                              \
@@ -42,62 +41,28 @@
         27, 127                                                                                    \
     } // ESC, BACKSPACE (8 on widnows)
 
-#include "Entertainment.hpp"
-// Chryste ale to jest shitty rozwiązanie, na załączenie tych zmiennych tutaj i w
-// SubtitleEpisodeManagment, bo tam są zmienne globalne, a tu define tego samego xDDD
-#define errorColor ent::darkRed
-#define SIColor ent::blue
-#define userColor ent::lime
-#define dataColor ent::darkBlue
-
 namespace menu {
 using WskaznikNaFunkcjeMenu = std::function<void(void)>;
 using keyboardKey = unsigned char;
 using emblem = char;
 using position = short;
 
-enum Color_e : uint8_t {
-    black,
-    darkBlue,
-    green,
-    turquoise,
-    darkRed,
-    purple,
-    shitDillyPink,
-    silver,
-    gray,
-    blue,
-    lime,
-    cyan,
-    red,
-    pink,
-    yellow,
-    white
-};
-
 constexpr short DEFAULT_MENU_REFRESH_TIME = 20'000; //[us]
-constexpr Color_e DEFAULT_BACKGROUND_COLOR = black;
-constexpr Color_e DEFAULT_FOREGROUND_COLOR = white;
+#define DEFAULT_COLOR ent::Format_t(ent::Format_t::Color::white)
 // On windows we got one sequence (224 and then arrow number)
 constexpr emblem DEFAULT_SPECIAL_KEY_SYMBOL_1 = 27; // 224; for windows
 constexpr emblem DEFAULT_SPECIAL_KEY_SYMBOL_2 = 91; // 224; for windows
 
-const Color_e DEFAULT_MENU_LOGO_FORE = Color_e(SIColor);
-constexpr Color_e DEFAULT_MENU_LOGO_BACK = black;
-const Color_e DEFAULT_MENU_OPTION_NOT_CHOOSEN_FORE = Color_e(dataColor);
-const Color_e DEFAULT_MENU_OPTION_CHOOSEN_FORE = Color_e(userColor);
-constexpr Color_e DEFAULT_MENU_OPTION_NOT_CHOOSEN_BACK = black;
-constexpr Color_e DEFAULT_MENU_OPTION_CHOOSEN_BACK = black;
+#define DEFAULT_MENU_LOGO ent::Format_t(ent::Format_t::Color::yellow)
+#define DEFAULT_MENU_OPTION_NOT_CHOOSEN ent::Format_t(ent::Format_t::Color::white)
+#define DEFAULT_MENU_OPTION_CHOOSEN ent::Format_t(ent::Format_t::Color::red)
 
 #define DEFAULT_MENU_COLOR_SET                                                                     \
     {                                                                                              \
-        menu::DEFAULT_MENU_LOGO_FORE, menu::DEFAULT_MENU_LOGO_BACK,                                \
-            menu::DEFAULT_MENU_OPTION_CHOOSEN_FORE, menu::DEFAULT_MENU_OPTION_NOT_CHOOSEN_FORE,    \
-            menu::DEFAULT_MENU_OPTION_CHOOSEN_BACK, menu::DEFAULT_MENU_OPTION_NOT_CHOOSEN_BACK     \
+        DEFAULT_MENU_LOGO, DEFAULT_MENU_OPTION_CHOOSEN, DEFAULT_MENU_OPTION_NOT_CHOOSEN,           \
     }
 
-void ChangeColor(Color_e, Color_e = DEFAULT_BACKGROUND_COLOR);
-void ClearScreen(Color_e = DEFAULT_FOREGROUND_COLOR, Color_e = DEFAULT_BACKGROUND_COLOR);
+void ClearScreen(ent::Format_t format = DEFAULT_COLOR);
 void setCursor(const position, const position);
 
 void* MenuBuforChecker(void*);
@@ -197,8 +162,7 @@ class Menu_t {
     std::forward_list<keyboardKey> back;
     std::vector<std::string> logo;
 
-    Color_e optionChoosenFore, optionNotChoosenFore, optionChoosenBack, optionNotChoosenBack,
-        logoFore, logoBack;
+    ent::Format_t optionChoosen, optionNotChoosen, logoF;
 
     uint_least8_t CheckKeyboard();
     void WriteLogo();
@@ -209,13 +173,13 @@ class Menu_t {
            std::initializer_list<std::pair<std::string, WskaznikNaFunkcjeMenu>>,
            std::initializer_list<keyboardKey>, std::initializer_list<keyboardKey>,
            std::initializer_list<keyboardKey>, std::initializer_list<keyboardKey>,
-           std::vector<Color_e>);
+           std::vector<ent::Format_t>);
 
     Menu_t(size_t, uint_least8_t, uint_least8_t, std::string,
            std::vector<std::pair<std::string, WskaznikNaFunkcjeMenu>>,
            std::initializer_list<keyboardKey>, std::initializer_list<keyboardKey>,
            std::initializer_list<keyboardKey>, std::initializer_list<keyboardKey>,
-           std::vector<Color_e>);
+           std::vector<ent::Format_t>);
 
 public:
     struct SpecialAction_t {
@@ -241,14 +205,14 @@ public:
                               std::initializer_list<keyboardKey>,
                               std::initializer_list<keyboardKey>,
                               std::initializer_list<keyboardKey>,
-                              std::initializer_list<keyboardKey>, std::vector<Color_e>);
+                              std::initializer_list<keyboardKey>, std::vector<ent::Format_t>);
 
     static Menu_t* CreateMenu(size_t, uint_least8_t, uint_least8_t, std::string,
                               std::vector<std::pair<std::string, WskaznikNaFunkcjeMenu>>,
                               std::initializer_list<keyboardKey>,
                               std::initializer_list<keyboardKey>,
                               std::initializer_list<keyboardKey>,
-                              std::initializer_list<keyboardKey>, std::vector<Color_e>);
+                              std::initializer_list<keyboardKey>, std::vector<ent::Format_t>);
 
     MenuOption_t& operator[](int i) { return menuList[i]; }
 

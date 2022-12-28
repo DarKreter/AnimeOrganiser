@@ -7,7 +7,6 @@
 #include "Subtitle.hpp"
 
 using namespace std;
-using ent::ChangeColor;
 using file::Episode;
 using file::File;
 using file::Subtitle;
@@ -37,50 +36,37 @@ int main(int argc, char* argv[])
     {
         string animeName;
 
-        ChangeColor(errorColor);
-        cout << "Number of passed arguments is invalid! [";
-        ChangeColor(dataColor);
-        cout << argc;
-        ChangeColor(errorColor);
-        cout << "]" << endl;
-        ChangeColor(SIColor);
-        cout << "Initialization of manual input of data [ ]\b\b";
-        ChangeColor(dataColor);
+        cout << errorColor << "Number of passed arguments is invalid! [" << dataColor << argc
+             << errorColor << "]" << endl
+             << SIColor << "Initialization of manual input of data [ ]\b\b" << dataColor;
         ent::Fan(2, 120'000);
-        ChangeColor(dataColor);
-        cout << "SUCCESS!";
-        ChangeColor(SIColor);
-        cout << "]" << endl << endl;
+
+        cout << dataColor << "SUCCESS!" << SIColor << "]" << endl << endl;
 
         animeName = File::GetAnimeName(fm::GetExecutablePath());
         // Mamy juz od uzytkownika nazwe anime
         string temp;
-        ChangeColor(SIColor);
-        cout << "Enter the offset for episodes: ";
+        cout << SIColor << "Enter the offset for episodes: ";
         Episode::Offset(1); // TODO: remove
     back1:
-        ChangeColor(userColor);
+        cout << userColor;
         getline(cin, temp);
         try {
             Episode::Offset(stoi(temp));
         }
         catch(...) {
-            ChangeColor(errorColor);
-            cout << "Error! Please enter the CORRECT offset for episodes: ";
+            cout << errorColor << "Error! Please enter the CORRECT offset for episodes: ";
             goto back1;
         }
-
-        ChangeColor(SIColor);
-        cout << "Enter the offset for subtitles: ";
+        cout << SIColor << "Enter the offset for subtitles: ";
     back2:
-        ChangeColor(userColor);
+        cout << userColor;
         getline(cin, temp);
         try {
             file::Subtitle::Offset(stoi(temp));
         }
         catch(...) {
-            ChangeColor(errorColor);
-            cout << "Error! Please enter the CORRECT offset for subtitles: ";
+            cout << errorColor << "Error! Please enter the CORRECT offset for subtitles: ";
             goto back2;
         }
 
@@ -108,14 +94,12 @@ int main(int argc, char* argv[])
     fm::ReadDirectory(File::GetDirectory(), episodes, Episode::Extensions(), false, true);
 
     if(episodes.empty()) {
-        ChangeColor(errorColor);
-        cout << "No episodes!" << endl;
+        cout << errorColor << "No episodes!" << endl;
         system("pause");
         exit(0);
     }
     if(subtitles.empty()) {
-        ChangeColor(errorColor);
-        cout << "No subtitles!" << endl;
+        cout << errorColor << "No subtitles!" << endl;
         system("pause");
         exit(0);
     }
@@ -293,7 +277,7 @@ int main(int argc, char* argv[])
                 meni->StartMenu();
                 meni->DeleteMenu();
 
-                ent::ChangeColor(SIColor);
+                cout << SIColor;
             }
 
             if(choosen1 != -1 && choosen2 != -1) // Jesli cos zostalo wybrane
@@ -357,7 +341,7 @@ int main(int argc, char* argv[])
             meni->StartMenu();
             meni->DeleteMenu();
 
-            ent::ChangeColor(SIColor);
+            cout << SIColor;
 
             if(choosen != -1) // Jesli cos zostalo wybrane
             {
@@ -411,7 +395,7 @@ int main(int argc, char* argv[])
             meni->StartMenu();
             meni->DeleteMenu();
 
-            ent::ChangeColor(SIColor);
+            cout << SIColor;
 
             if(choosen != -1) // Jesli cos zostalo wybrane
             {
@@ -457,8 +441,7 @@ int main(int argc, char* argv[])
                      }});
 
         x.push_back({"I've seen Enough. I'm Satisfied.", [&meni]() {
-                         menu::ClearScreen();
-                         ent::ChangeColor(SIColor);
+                         menu::ClearScreen(SIColor);
                          getchar();
                          try {
                              meni->Die();
@@ -476,7 +459,7 @@ int main(int argc, char* argv[])
         meni->StartMenu();
         meni->DeleteMenu();
 
-        ent::ChangeColor(SIColor);
+        cout << SIColor;
 
         if(choosen != -1) // Jesli cos zostalo wybrane
         {
@@ -500,8 +483,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    ent::ChangeColor(SIColor);
-    cout << endl << "SUCCESS" << endl;
+    cout << SIColor << endl << "SUCCESS" << endl;
 
     cout << "Press any key to continue" << endl;
     cin.get();

@@ -12,20 +12,22 @@ string Format_t::Sequence() const
         if(int(pow(2, i)) & mode)               // if flag is set
             sequence += to_string(i + 3) + ";"; // add this mode
 
-    if(foregroundColor != none) { // one of colors
-                                  // do standard color
-        sequence += to_string((int)foreground) + to_string((int)foregroundColor) + ";";
-        if(foregroundColor == rgb) // eventually add rgb sequence
-            sequence += rgb_sequence + to_string((int)fRGB.red) + ";" + to_string((int)fRGB.green) +
-                        ";" + to_string((int)fRGB.blue) + ";";
+    if(foregroundColor.color != Color::none) { // one of colors
+                                               // do standard color
+        sequence += to_string((int)foreground) + to_string((int)foregroundColor.color) + ";";
+        if(foregroundColor.color == Color::rgb) // eventually add rgb sequence
+            sequence += rgb_sequence + to_string((int)foregroundColor.RGB.red) + ";" +
+                        to_string((int)foregroundColor.RGB.green) + ";" +
+                        to_string((int)foregroundColor.RGB.blue) + ";";
     }
 
-    if(backgroundColor != none) { // one of colors
-                                  // do standard color
-        sequence += to_string((int)background) + to_string((int)backgroundColor) + ";";
-        if(backgroundColor == rgb) // eventually add rgb sequence
-            sequence += rgb_sequence + to_string((int)bRGB.red) + ";" + to_string((int)bRGB.green) +
-                        ";" + to_string((int)bRGB.blue) + ";";
+    if(backgroundColor.color != Color::none) { // one of colors
+                                               // do standard color
+        sequence += to_string((int)background) + to_string((int)backgroundColor.color) + ";";
+        if(backgroundColor.color == Color::rgb) // eventually add rgb sequence
+            sequence += rgb_sequence + to_string((int)backgroundColor.RGB.red) + ";" +
+                        to_string((int)backgroundColor.RGB.green) + ";" +
+                        to_string((int)backgroundColor.RGB.blue) + ";";
     }
 
     sequence.erase(sequence.end() - 1);
@@ -50,17 +52,6 @@ void Fan(int howLong, int breakTime)
         cout << tab[i % 4] << "\b" << flush;
         usleep(breakTime);
     }
-}
-
-void Format_t::SetFColor(Color _color, RGB _rgb)
-{
-    foregroundColor = _color;
-    fRGB = _rgb;
-}
-void Format_t::SetBColor(Color _color, RGB _rgb)
-{
-    backgroundColor = _color;
-    bRGB = _rgb;
 }
 
 std::ostream& operator<<(std::ostream& stream, const Format_t& _format)

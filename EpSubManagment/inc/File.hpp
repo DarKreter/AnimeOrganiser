@@ -9,7 +9,7 @@
 #include <string>
 
 #define EPISODE_DELAY 0
-extern ent::Color errorColor, SIColor, userColor, dataColor;
+extern ent::Format_t errorColor, SIColor, userColor, dataColor;
 
 namespace file {
 struct Error_t {

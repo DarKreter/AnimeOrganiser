@@ -21,17 +21,25 @@ class Format_t {
 
 public:
     // Enumerate types
-    enum Color : uint8_t {
-        black,
-        red,
-        green,
-        yellow,
-        blue,
-        purple,
-        cyan,
-        white,
-        rgb,
-        none
+    struct Color {
+        enum basic : uint8_t {
+            black,
+            red,
+            green,
+            yellow,
+            blue,
+            purple,
+            cyan,
+            white,
+            rgb,
+            none
+        } color;
+        struct RGB_t {
+            uint8_t red, green, blue;
+        } RGB;
+
+        Color(basic _color, RGB_t _rgb = {0, 0, 0}) : color{_color}, RGB{_rgb} { ; }
+        Color(const Color& another) : color{another.color}, RGB{another.RGB} { ; }
     };
 
     enum Mode : uint8_t {
@@ -50,22 +58,23 @@ public:
         return Mode(uint8_t(mode1) | uint8_t(mode2));
     }
 
-    struct RGB {
-        uint8_t red, green, blue;
-    };
-
 private:
     // private variables
-    Color foregroundColor = none, backgroundColor = none;
-    RGB fRGB, bRGB;
+    Color foregroundColor = Color::none, backgroundColor = Color::none;
     uint8_t mode;
 
 public:
     // Access functions
-    void SetFColor(Color _color, RGB _rgb = {0, 0, 0});
-    void SetBColor(Color _color, RGB _rgb = {0, 0, 0});
+    void SetFColor(Color _color) { foregroundColor = _color; }
+    void SetBColor(Color _color) { backgroundColor = _color; }
     void SetMode(Mode _mode) { mode = uint8_t(_mode); }
     std::string Sequence() const;
+
+    Format_t(Color fgc, Color bgc = Color::none, Mode m = normal)
+        : foregroundColor{fgc}, backgroundColor{bgc}, mode{m}
+    {
+        ;
+    }
 
     friend std::ostream& operator<<(std::ostream& stream, const Format_t& _format);
 };

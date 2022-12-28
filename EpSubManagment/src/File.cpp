@@ -7,8 +7,10 @@
 using namespace std;
 using file::File;
 
-ent::Color errorColor = ent::darkRed, SIColor = ent::blue, userColor = ent::lime,
-           dataColor = ent::darkBlue;
+ent::Format_t errorColor = ent::Format_t(ent::Format_t::Color::red),
+              SIColor = ent::Format_t(ent::Format_t::Color::cyan),
+              userColor = ent::Format_t(ent::Format_t::Color::green),
+              dataColor = ent::Format_t(ent::Format_t::Color::blue);
 
 namespace file {
 string File::animeName = "";
@@ -74,7 +76,7 @@ void File::FindEpNumber(int offset)
 string File::GetAnimeName(string path)
 {
     string name;
-    ent::ChangeColor(errorColor); // cout << endl;
+    cout << errorColor;
 
     try {
         path.erase(path.length() - 1, 1);
@@ -96,11 +98,10 @@ string File::GetAnimeName(string path)
         path = sm::RemoveDoubleWS(sm::RemoveWSBeginEnd(path));
 
         string animeName;
-        ChangeColor(SIColor);
-        cout << "Suggesting name of anime:" << endl
+        cout << SIColor << "Suggesting name of anime:" << endl
              << "\t\'" << path << "\'" << endl
-             << "If the name is correct press ENTER, if not write your \"better\" name: ";
-        ChangeColor(userColor);
+             << "If the name is correct press ENTER, if not write your \"better\" name: "
+             << userColor;
         getline(cin, animeName);
 
         if(animeName.empty())
@@ -111,9 +112,7 @@ string File::GetAnimeName(string path)
     catch(...) {
         string animeName;
 
-        ChangeColor(SIColor);
-        cout << "Enter the name of Anime to transmutation: ";
-        ChangeColor(userColor);
+        cout << SIColor << "Enter the name of Anime to transmutation: " << userColor;
         getline(cin, animeName);
 
         return animeName;
@@ -123,7 +122,7 @@ string File::GetAnimeName(string path)
 int File::GetSeasonNumber(string path)
 {
     int sN;
-    ent::ChangeColor(errorColor); // cout << endl;
+    cout << errorColor; // cout << endl;
 
     try {
         path.erase(path.length() - 1, 1);
@@ -169,7 +168,7 @@ int File::GetSeasonNumber(string path)
              << endl;
     }
 
-    ent::ChangeColor(SIColor);
+    cout << SIColor;
     cout << endl;
 
     cout << "Please check if the number of season is in square brackets \"[]\"" << endl;
@@ -177,15 +176,14 @@ int File::GetSeasonNumber(string path)
     string line;
 
 back:
-    ent::ChangeColor(userColor);
+    cout << userColor;
     getline(cin, line);
 
     try {
         sN = stoi(line);
     }
     catch(...) {
-        ent::ChangeColor(errorColor);
-        cout << "Error! Please enter the CORRECT number of season: ";
+        cout << errorColor << "Error! Please enter the CORRECT number of season: ";
         goto back;
     }
 

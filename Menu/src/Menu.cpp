@@ -1,18 +1,14 @@
 #include "Menu.hpp"
 
 using namespace std;
+using namespace ent;
 
 namespace menu {
-void ChangeColor([[maybe_unused]] Color_e f, [[maybe_unused]] Color_e b)
-{
-    // SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
-    //                         static_cast<int>(f) + static_cast<int>(b) * 16);
-}
 
-void ClearScreen(Color_e fore, Color_e back)
+void ClearScreen(ent::Format_t format)
 {
     usleep(100'000);
-    ChangeColor(fore, back);
+    cout << format;
     system("clear");
 }
 
@@ -67,7 +63,7 @@ Menu_t* Menu_t::CreateMenu(size_t sBL, uint_least8_t liine, uint_least8_t sl, st
                            std::initializer_list<keyboardKey> upp,
                            std::initializer_list<keyboardKey> downn,
                            std::initializer_list<keyboardKey> inn,
-                           std::initializer_list<keyboardKey> backk, std::vector<Color_e> colorr)
+                           std::initializer_list<keyboardKey> backk, std::vector<Format_t> colorr)
 {
     Menu_t* nowy = new Menu_t(sBL, liine, sl, logoo, lisst, upp, downn, inn, backk, colorr);
     return nowy;
@@ -78,7 +74,7 @@ Menu_t* Menu_t::CreateMenu(size_t sBL, uint_least8_t liine, uint_least8_t sl, st
                            std::initializer_list<keyboardKey> upp,
                            std::initializer_list<keyboardKey> downn,
                            std::initializer_list<keyboardKey> inn,
-                           std::initializer_list<keyboardKey> backk, std::vector<Color_e> colorr)
+                           std::initializer_list<keyboardKey> backk, std::vector<Format_t> colorr)
 {
     Menu_t* nowy = new Menu_t(sBL, liine, sl, logoo, lisst, upp, downn, inn, backk, colorr);
     return nowy;
@@ -88,14 +84,13 @@ Menu_t::Menu_t(size_t sBL, uint_least8_t liine, uint_least8_t sl, string logoo,
                std::vector<std::pair<string, WskaznikNaFunkcjeMenu>> lisst,
                std::initializer_list<keyboardKey> upp, std::initializer_list<keyboardKey> downn,
                std::initializer_list<keyboardKey> inn, std::initializer_list<keyboardKey> backk,
-               std::vector<Color_e> colorr)
+               std::vector<Format_t> colorr)
     : choice{0}, hmo{static_cast<uint_least8_t>(lisst.size())}, symetryLine{sl}, maxWidth{0},
       upLine{liine}, up{static_cast<std::forward_list<keyboardKey>>(upp)},
       down{static_cast<std::forward_list<keyboardKey>>(downn)},
       in{static_cast<std::forward_list<keyboardKey>>(inn)},
-      back{static_cast<std::forward_list<keyboardKey>>(backk)}, optionChoosenFore{colorr[2]},
-      optionNotChoosenFore{colorr[3]}, optionChoosenBack{colorr[4]},
-      optionNotChoosenBack{colorr[5]}, logoFore{colorr[0]}, logoBack{colorr[1]}
+      back{static_cast<std::forward_list<keyboardKey>>(backk)}, optionChoosen{colorr[1]},
+      optionNotChoosen{colorr[2]}, logoF{colorr[0]}
 {
     string roboczy;
     std::istringstream strumien(logoo);
@@ -117,7 +112,7 @@ Menu_t::Menu_t(size_t sBL, uint_least8_t liine, uint_least8_t sl, string logoo,
                std::initializer_list<std::pair<string, WskaznikNaFunkcjeMenu>> lisst,
                std::initializer_list<keyboardKey> upp, std::initializer_list<keyboardKey> downn,
                std::initializer_list<keyboardKey> inn, std::initializer_list<keyboardKey> backk,
-               std::vector<Color_e> colorr)
+               std::vector<Format_t> colorr)
     : Menu_t(sBL, liine, sl, logoo,
              static_cast<std::vector<std::pair<string, WskaznikNaFunkcjeMenu>>>(lisst), upp, downn,
              inn, backk, colorr)
@@ -193,9 +188,9 @@ void Menu_t::MenuOption_t::Active(bool active)
     setCursor(0, line);
     std::cout << string(who->maxWidth, ' ');
     if(active)
-        ChangeColor(who->optionChoosenFore, who->optionChoosenBack);
+        cout << who->optionChoosen;
     else
-        ChangeColor(who->optionNotChoosenFore, who->optionNotChoosenBack);
+        cout << who->optionNotChoosen;
     std::cout << '\r' << string(who->symetryLine - (text.length() / 2), ' ')
               << (active == true ? "-" : " ") << text;
 }
@@ -204,7 +199,7 @@ void Menu_t::WriteLogo()
 {
     setCursor(0, upLine);
 
-    ChangeColor(logoFore, logoBack);
+    cout << logoF;
 
     for(auto lol : logo)
         cout << string(symetryLine - (lol.length() / 2) + 1, ' ') << lol << endl;
