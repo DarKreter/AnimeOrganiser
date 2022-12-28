@@ -1,17 +1,16 @@
-#include "Entertainment.h"
-#include "Episode.h"
-#include "File.h"
-#include "FilesManagment.h"
-#include "Menu.h"
-#include "StringManagment.h"
-
+#include "Entertainment.hpp"
+#include "Episode.hpp"
+#include "File.hpp"
+#include "FilesManagment.hpp"
+#include "Menu.hpp"
+#include "StringManagment.hpp"
 
 using namespace std;
-using ent::ChangeColor;
+using namespace ent;
 using file::Episode;
 using file::File;
 
-#define LOG_VERSION
+// #define LOG_VERSION
 
 int main(int argc, char* argv[])
 {
@@ -27,51 +26,41 @@ int main(int argc, char* argv[])
 
     if(argc == 5) /// Jesli nastapilo wywolanie odgorne przekazujemy dane klasie
     {
-        File::Configure(sm::STWS(argv[1]), sm::STWS(argv[2]),
-                        File::GetSeasonNumber(sm::STWS(argv[2])));
+        File::Configure(argv[1], argv[2], File::GetSeasonNumber(argv[2]));
         Episode::Offset(stoi(argv[3]));
     }
     else /// Jesli musimy te dane sami pobrac
     {
-        wstring animeName;
+        string animeName;
 
-        ChangeColor(errorColor);
-        cout << "Number of passed arguments is invalid! [";
-        ChangeColor(dataColor);
-        cout << argc;
-        ChangeColor(errorColor);
-        cout << "]" << endl;
-        ChangeColor(SIColor);
-        cout << "Initialization of manual input of data [ ]\b\b";
-        ChangeColor(dataColor);
+        cout << errorColor << "Number of passed arguments is invalid! [" << dataColor << argc
+             << errorColor << "]" << endl
+             << SIColor << "Initialization of manual input of data [ ]\b\b" << dataColor;
         ent::Fan(11, 120);
-        ChangeColor(dataColor);
-        cout << "SUCCESS!";
-        ChangeColor(SIColor);
-        cout << "]" << endl << endl;
+        cout << dataColor << "SUCCESS!" << SIColor << "]" << endl << endl;
 
-        animeName = File::GetAnimeName(fm::GetExecutablePathW());
+        animeName = File::GetAnimeName(fm::GetExecutablePath());
         // Mamy juz od uzytkownika nazwe anime
         string temp;
-        ChangeColor(SIColor);
-        cout << "Enter the offset for episodes: ";
+
+        cout << SIColor << "Enter the offset for episodes: ";
     back1:
-        ChangeColor(userColor);
+        cout << userColor;
+
         getline(cin, temp);
         try {
             Episode::Offset(stoi(temp));
         }
         catch(...) {
-            ChangeColor(errorColor);
-            cout << "Error! Please enter the CORRECT offset for episodes: ";
+            cout << errorColor << "Error! Please enter the CORRECT offset for episodes: ";
             goto back1;
         }
 
         // Bierzemy z GetExecutablePath sciezke oraz GetSeasonNumber razem z wylapywaniem bledow
         // pobiera numer sezonu
-        File::Configure(animeName, fm::GetExecutablePathW(),
-                        File::GetSeasonNumber(fm::GetExecutablePathW()));
-
+        File::Configure(animeName, fm::GetExecutablePath(),
+                        File::GetSeasonNumber(fm::GetExecutablePath()));
+        cout << endl;
         // cout << Episode::animeName << endl;
         // cout << Episode::animeDirectory << endl;
         // cout << Episode::seasonNumber << endl;
@@ -80,12 +69,11 @@ int main(int argc, char* argv[])
     }
 
     vector<Episode> episodes;
-    fm::ReadDirectoryWS(File::GetDirectory(), episodes, Episode::Extensions(), false, true);
+    fm::ReadDirectory(File::GetDirectory(), episodes, Episode::Extensions(), false, true);
 
     if(episodes.empty()) {
-        ChangeColor(errorColor);
-        cout << "No episodes!" << endl;
-        system("pause");
+        cout << errorColor << "No episodes!" << endl;
+        cin.get();
         exit(0);
     }
 
@@ -101,12 +89,12 @@ int main(int argc, char* argv[])
         if(ep.episodeNumber == -1)
             ep.episodeNumber = File::MaxEpisodeNumber() + 1;
 
-    /*cout << "maxEpisodeNumber = " << File::maxEpisodeNumber << endl;
-    for (auto& sub : subtitles)
-            cout << sub.episodeNumber << " - " << sub.originalName << endl;
-    cout << "-----------------------" << endl;
-    for (auto& ep : episodes)
-            cout << ep.episodeNumber << " - " << ep.originalName << endl;*/
+    // cout << "maxEpisodeNumber = " << File::maxEpisodeNumber << endl;
+    // for (auto& sub : subtitles)
+    //         cout << sub.episodeNumber << " - " << sub.originalName << endl;
+    // cout << "-----------------------" << endl;
+    // for (auto& ep : episodes)
+    //         cout << ep.episodeNumber << " - " << ep.originalName << endl;
     // wszystkie episode i subtitle maj� ju� w episodeNumber odpowiedni numer
     // Teraz trzeba je polaczyc w dwuwyymiarowej tablicy ktora ma pierwszy rozmiar maxEpisodeNumber
     // + 1 I potem przelecenie wszyystkiego zmieniajac nazwe albo robiac okienka wyboru (no ogolnie
@@ -144,11 +132,14 @@ int main(int argc, char* argv[])
             // cout << episodesSorted[i][0].NewName() << endl;
 
 #ifdef LOG_VERSION
-            fm::RenameFileWLog(episodesSorted[i][0].OriginalNameWithPath(),
-                               episodesSorted[i][0].NewName(), log);
+            fm::RenameFileLog(episodesSorted[i][0].OriginalNameWithPath(),
+                              episodesSorted[i][0].NewName(), log);
 #else
-            fm::RenameFileW(episodesSorted[i][0].OriginalNameWithPath(),
-                            episodesSorted[i][0].NewName());
+            fm::RenameFile(episodesSorted[i][0].OriginalNameWithPath(),
+                           episodesSorted[i][0].NewName());
+            cout << "\t" << SIColor << episodesSorted[i][0].NewName() << " - " << successColor
+                 << "DONE!" << endl
+                 << errorColor;
 #endif
 
             // Zmiana nazwy odcinka anime i napisow plus przeniesienie napisow do lokalizacji
@@ -171,7 +162,7 @@ int main(int argc, char* argv[])
                     menu::ClearScreen();
                     meni->Die();
                 };
-                x.push_back({sm::WSTS(episodesSorted[i][j].OriginalName()), lambda});
+                x.push_back({episodesSorted[i][j].OriginalName(), lambda});
             }
 
             x.push_back({"Nani?! All of them are wrong?! MASAKA!", [&meni]() {
@@ -183,30 +174,45 @@ int main(int argc, char* argv[])
                                             "Found too much episodes with number " + to_string(i) +
                                                 "!\nPlease choose which one is correct!",
                                             x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS,
-                                            DEFAULT_IN_KEYBOARD_KEYS, {}, DEFAULT_MENU_COLOR_SET);
+                                            DEFAULT_IN_KEYBOARD_KEYS, {},
+                                            {SIColor, userMenuColor, dataColor});
+
+            cout << "OH NOO! IMPOSSIBLE! (⊙_☉)\nI haven't been able to resolve occured "
+                    "problem by myself (˃̣̣̥⌓˂̣̣̥⋆)\n"
+                 << Format_t(errorColor.GetFColor(),
+                             Format_t::Mode::fastBlinking | errorColor.GetMode(),
+                             errorColor.GetBColor())
+                 << "Press enter to resolve issue..." << errorColor << endl;
+            cin.get();
 
             meni->StartMenu();
             meni->DeleteMenu();
 
-            ent::ChangeColor(SIColor);
+            cout << SIColor;
 
             if(choosen != -1) // Jesli cos zostalo wybrane
             {
 #ifdef LOG_VERSION
-                fm::RenameFileWLog(episodesSorted[i][choosen].OriginalNameWithPath(),
-                                   episodesSorted[i][choosen].NewName(), log);
+                fm::RenameFileLog(episodesSorted[i][choosen].OriginalNameWithPath(),
+                                  episodesSorted[i][choosen].NewName(), log);
 #else
-                fm::RenameFileW(episodesSorted[i][choosen].OriginalNameWithPath(),
-                                episodesSorted[i][choosen].NewName());
+                fm::RenameFile(episodesSorted[i][choosen].OriginalNameWithPath(),
+                               episodesSorted[i][choosen].NewName());
+                cout << "\t" << SIColor << episodesSorted[i][choosen].NewName() << " - "
+                     << successColor << "DONE!" << endl
+                     << errorColor;
 #endif
             }
         }
     }
 
-    ent::ChangeColor(SIColor);
-    cout << endl << "SUCCESS" << endl;
-
-    system("Pause");
+    cout << successColor << endl
+         << "SUCCESS" << endl
+         << Format_t(successColor.GetFColor(),
+                     Format_t::Mode::fastBlinking | successColor.GetMode(),
+                     successColor.GetBColor())
+         << "Press enter to continue..." << successColor << endl;
+    cin.get();
 
     return 0;
 }

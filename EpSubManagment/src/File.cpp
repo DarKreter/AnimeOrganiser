@@ -6,11 +6,15 @@
 
 using namespace std;
 using file::File;
+using namespace ent;
 
-ent::Format_t errorColor = ent::Format_t(ent::Format_t::Color::red),
-              SIColor = ent::Format_t(ent::Format_t::Color::cyan),
-              userColor = ent::Format_t(ent::Format_t::Color::green),
-              dataColor = ent::Format_t(ent::Format_t::Color::blue);
+Format_t errorColor = Format_t(Format_t::Color(Format_t::Color::rgb, {255, 0, 0})),
+         SIColor = Format_t(Format_t::Color(Format_t::Color::rgb, {0, 255, 255})),
+         userColor = Format_t(Format_t::Color(Format_t::Color::rgb, {128, 255, 0})),
+         userMenuColor = Format_t(Format_t::Color(Format_t::Color::rgb, {128, 255, 0}),
+                                  Format_t::Mode::fastBlinking | Format_t::Mode::underline),
+         dataColor = Format_t(Format_t::Color(Format_t::Color::rgb, {0, 0, 255})),
+         successColor = Format_t(Format_t::Color(Format_t::Color::rgb, {128, 255, 0}));
 
 namespace file {
 string File::animeName = "";

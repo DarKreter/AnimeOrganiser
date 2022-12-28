@@ -56,6 +56,7 @@ void Fan(int howLong, int breakTime)
 
 std::ostream& operator<<(std::ostream& stream, const Format_t& _format)
 {
+    Format_t::Reset();
     stream << _format.Sequence();
     return stream;
 }

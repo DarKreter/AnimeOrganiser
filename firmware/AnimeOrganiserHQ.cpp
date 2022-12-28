@@ -7,6 +7,7 @@
 #include "Subtitle.hpp"
 
 using namespace std;
+using namespace ent;
 using file::Episode;
 using file::File;
 using file::Subtitle;
@@ -17,6 +18,7 @@ using file::Subtitle;
 
 int main(int argc, char* argv[])
 {
+
 #ifdef LOG_VERSION
     wofstream log("log.k8d");
     struct L {
@@ -75,6 +77,7 @@ int main(int argc, char* argv[])
         File::Configure(animeName, fm::GetExecutablePath(),
                         File::GetSeasonNumber(fm::GetExecutablePath()));
 
+        cout << endl;
         // cout << Episode::animeName << endl;
         // cout << Episode::animeDirectory << endl;
         // cout << Episode::seasonNumber << endl;
@@ -95,12 +98,12 @@ int main(int argc, char* argv[])
 
     if(episodes.empty()) {
         cout << errorColor << "No episodes!" << endl;
-        system("pause");
+        cin.get();
         exit(0);
     }
     if(subtitles.empty()) {
         cout << errorColor << "No subtitles!" << endl;
-        system("pause");
+        cin.get();
         exit(0);
     }
 
@@ -182,6 +185,12 @@ int main(int argc, char* argv[])
                          subtitlesSorted[i][0].NewName());
             fm::RenameFile(episodesSorted[i][0].OriginalNameWithPath(),
                            episodesSorted[i][0].NewName());
+            cout << "\t" << SIColor << episodesSorted[i][0].NewName() << " - " << successColor
+                 << "DONE!" << endl
+                 << errorColor;
+            cout << "\t" << SIColor << subtitlesSorted[i][0].NewName() << " - " << successColor
+                 << "DONE!" << endl
+                 << errorColor;
 #endif
             // Zmiana nazwy odcinka anime i napisow plus przeniesienie napisow do lokalizacji
             // odcinka
@@ -245,7 +254,15 @@ int main(int argc, char* argv[])
                     "Found too much episodes and subtitles with number " + to_string(i) +
                         "!\nFirstly please choose which episode is correct !",
                     x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS,
-                    DEFAULT_IN_KEYBOARD_KEYS, {}, DEFAULT_MENU_COLOR_SET);
+                    DEFAULT_IN_KEYBOARD_KEYS, {}, {SIColor, userMenuColor, dataColor});
+
+                cout << "OH NOO! IMPOSSIBLE! (⊙_☉)\nI haven't been able to resolve occured "
+                        "problem by myself (˃̣̣̥⌓˂̣̣̥⋆)\n"
+                     << Format_t(errorColor.GetFColor(),
+                                 Format_t::Mode::fastBlinking | errorColor.GetMode(),
+                                 errorColor.GetBColor())
+                     << "Press enter to resolve issue..." << errorColor << endl;
+                cin.get();
 
                 meni->StartMenu();
                 meni->DeleteMenu();
@@ -272,7 +289,7 @@ int main(int argc, char* argv[])
                     "Found too much episodes and subtitles with number " + to_string(i) +
                         "!\nNow please choose which subtitle is correct !",
                     x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS,
-                    DEFAULT_IN_KEYBOARD_KEYS, {}, DEFAULT_MENU_COLOR_SET);
+                    DEFAULT_IN_KEYBOARD_KEYS, {}, {SIColor, userMenuColor, dataColor});
 
                 meni->StartMenu();
                 meni->DeleteMenu();
@@ -292,6 +309,12 @@ int main(int argc, char* argv[])
                              subtitlesSorted[i][choosen2].NewName());
                 fm::RenameFile(episodesSorted[i][choosen1].OriginalNameWithPath(),
                                episodesSorted[i][choosen1].NewName());
+                cout << "\t" << SIColor << episodesSorted[i][choosen1].NewName() << " - "
+                     << successColor << "DONE!" << endl
+                     << errorColor;
+                cout << "\t" << SIColor << subtitlesSorted[i][choosen2].NewName() << " - "
+                     << successColor << "DONE!" << endl
+                     << errorColor;
 #endif
 
                 auto newEnd1 = remove(begin(subtitlesSorted[i]), end(subtitlesSorted[i]),
@@ -336,7 +359,16 @@ int main(int argc, char* argv[])
                                             "Found too much episodes with number " + to_string(i) +
                                                 "!\nPlease choose which one is correct !",
                                             x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS,
-                                            DEFAULT_IN_KEYBOARD_KEYS, {}, DEFAULT_MENU_COLOR_SET);
+                                            DEFAULT_IN_KEYBOARD_KEYS, {},
+                                            {SIColor, userMenuColor, dataColor});
+
+            cout << "OH NOO! IMPOSSIBLE! (⊙_☉)\nI haven't been able to resolve occured "
+                    "problem by myself (˃̣̣̥⌓˂̣̣̥⋆)\n"
+                 << Format_t(errorColor.GetFColor(),
+                             Format_t::Mode::fastBlinking | errorColor.GetMode(),
+                             errorColor.GetBColor())
+                 << "Press enter to resolve issue..." << errorColor << endl;
+            cin.get();
 
             meni->StartMenu();
             meni->DeleteMenu();
@@ -355,6 +387,12 @@ int main(int argc, char* argv[])
                              subtitlesSorted[i][0].NewName());
                 fm::RenameFile(episodesSorted[i][choosen].OriginalNameWithPath(),
                                episodesSorted[i][choosen].NewName());
+                cout << "\t" << SIColor << episodesSorted[i][choosen].NewName() << " - "
+                     << successColor << "DONE!" << endl
+                     << errorColor;
+                cout << "\t" << SIColor << subtitlesSorted[i][0].NewName() << " - " << successColor
+                     << "DONE!" << endl
+                     << errorColor;
 #endif
 
                 auto newEnd = remove(begin(episodesSorted[i]), end(episodesSorted[i]),
@@ -385,12 +423,20 @@ int main(int argc, char* argv[])
                              meni->Die();
                          }});
 
-            meni = menu::Menu_t::CreateMenu(2, 1, 55,
-                                            "Found too much subtitles for episode number " +
-                                                to_string(i) +
-                                                "!\nPlease choose which one is correct!",
-                                            x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS,
-                                            DEFAULT_IN_KEYBOARD_KEYS, {}, DEFAULT_MENU_COLOR_SET);
+            meni = menu::Menu_t::CreateMenu(
+                2, 1, 55,
+                "Found too much subtitles for episode number " + to_string(i) +
+                    "!\nPlease choose which one is correct!",
+                x, DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS, DEFAULT_IN_KEYBOARD_KEYS,
+                {}, {SIColor, userMenuColor, dataColor});
+
+            cout << "OH NOO! IMPOSSIBLE! (⊙_☉)\nI haven't been able to resolve occured "
+                    "problem by myself (˃̣̣̥⌓˂̣̣̥⋆)\n"
+                 << Format_t(errorColor.GetFColor(),
+                             Format_t::Mode::fastBlinking | errorColor.GetMode(),
+                             errorColor.GetBColor())
+                 << "Press enter to resolve issue..." << errorColor << endl;
+            cin.get();
 
             meni->StartMenu();
             meni->DeleteMenu();
@@ -409,6 +455,12 @@ int main(int argc, char* argv[])
                              subtitlesSorted[i][choosen].NewName());
                 fm::RenameFile(episodesSorted[i][0].OriginalNameWithPath(),
                                episodesSorted[i][0].NewName());
+                cout << "\t" << SIColor << episodesSorted[i][0].NewName() << " - " << successColor
+                     << "DONE!" << endl
+                     << errorColor;
+                cout << "\t" << SIColor << subtitlesSorted[i][choosen].NewName() << " - "
+                     << successColor << "DONE!" << endl
+                     << errorColor;
 #endif
 
                 auto newEnd = remove(begin(subtitlesSorted[i]), end(subtitlesSorted[i]),
@@ -454,7 +506,15 @@ int main(int argc, char* argv[])
         meni = menu::Menu_t::CreateMenu(
             2, 1, 55, "Choose subtitle file for this episode:\n" + ep.OriginalName(), x,
             DEFAULT_UP_KEYBOARD_KEYS, DEFAULT_DOWN_KEYBOARD_KEYS, DEFAULT_IN_KEYBOARD_KEYS, {},
-            DEFAULT_MENU_COLOR_SET);
+            {SIColor, userMenuColor, dataColor});
+
+        cout << "OH NOO! IMPOSSIBLE! (⊙_☉)\nI haven't been able to resolve occured "
+                "problem by myself (˃̣̣̥⌓˂̣̣̥⋆)\n"
+             << Format_t(errorColor.GetFColor(),
+                         Format_t::Mode::fastBlinking | errorColor.GetMode(),
+                         errorColor.GetBColor())
+             << "Press enter to resolve issue..." << errorColor << endl;
+        cin.get();
 
         meni->StartMenu();
         meni->DeleteMenu();
@@ -483,9 +543,12 @@ int main(int argc, char* argv[])
         }
     }
 
-    cout << SIColor << endl << "SUCCESS" << endl;
-
-    cout << "Press any key to continue" << endl;
+    cout << successColor << endl
+         << "SUCCESS" << endl
+         << Format_t(successColor.GetFColor(),
+                     Format_t::Mode::fastBlinking | successColor.GetMode(),
+                     successColor.GetBColor())
+         << "Press enter to continue..." << successColor << endl;
     cin.get();
 
     return 0;

@@ -5,7 +5,7 @@ using namespace ent;
 
 namespace menu {
 
-void ClearScreen(ent::Format_t format)
+void ClearScreen(Format_t format)
 {
     usleep(100'000);
     cout << format;
@@ -186,13 +186,14 @@ uint_least8_t Menu_t::CheckKeyboard()
 void Menu_t::MenuOption_t::Active(bool active)
 {
     setCursor(0, line);
-    std::cout << string(who->maxWidth, ' ');
+    Format_t::Reset();
+    cout << string(who->maxWidth, ' ') << '\r'
+         << string(who->symetryLine - (text.length() / 2), ' ');
     if(active)
         cout << who->optionChoosen;
     else
         cout << who->optionNotChoosen;
-    std::cout << '\r' << string(who->symetryLine - (text.length() / 2), ' ')
-              << (active == true ? "-" : " ") << text;
+    cout << (active == true ? "-" : " ") << text;
 }
 
 void Menu_t::WriteLogo()

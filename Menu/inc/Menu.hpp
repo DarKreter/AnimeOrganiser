@@ -53,9 +53,12 @@ constexpr short DEFAULT_MENU_REFRESH_TIME = 20'000; //[us]
 constexpr emblem DEFAULT_SPECIAL_KEY_SYMBOL_1 = 27; // 224; for windows
 constexpr emblem DEFAULT_SPECIAL_KEY_SYMBOL_2 = 91; // 224; for windows
 
-#define DEFAULT_MENU_LOGO ent::Format_t(ent::Format_t::Color::yellow)
-#define DEFAULT_MENU_OPTION_NOT_CHOOSEN ent::Format_t(ent::Format_t::Color::white)
-#define DEFAULT_MENU_OPTION_CHOOSEN ent::Format_t(ent::Format_t::Color::red)
+#define DEFAULT_MENU_LOGO                                                                          \
+    ent::Format_t(ent::Format_t::Color(ent::Format_t::Color::rgb, {255, 255, 255}))
+#define DEFAULT_MENU_OPTION_NOT_CHOOSEN                                                            \
+    ent::Format_t(ent::Format_t::Color(ent::Format_t::Color::rgb, {156, 113, 161}))
+#define DEFAULT_MENU_OPTION_CHOOSEN                                                                \
+    ent::Format_t(ent::Format_t::Color(ent::Format_t::Color::rgb, {255, 0, 127}))
 
 #define DEFAULT_MENU_COLOR_SET                                                                     \
     {                                                                                              \

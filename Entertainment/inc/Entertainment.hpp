@@ -13,6 +13,7 @@ class Format_t {
     constexpr static char const* begin_sequence = "\033[";
     constexpr static char const* end_sequence = "m";
     constexpr static char const* rgb_sequence = "2;";
+    constexpr static char const* reset_sequence = "\033[0m";
 
     enum Ground : uint8_t {
         foreground = 3,
@@ -68,9 +69,13 @@ public:
     void SetFColor(Color _color) { foregroundColor = _color; }
     void SetBColor(Color _color) { backgroundColor = _color; }
     void SetMode(Mode _mode) { mode = uint8_t(_mode); }
+    Color GetFColor() { return foregroundColor; }
+    Color GetBColor() { return backgroundColor; }
+    Mode GetMode() { return (Mode)mode; }
     std::string Sequence() const;
+    static void Reset() { std::cout << reset_sequence; }
 
-    Format_t(Color fgc, Color bgc = Color::none, Mode m = normal)
+    Format_t(Color fgc, Mode m = normal, Color bgc = Color::none)
         : foregroundColor{fgc}, backgroundColor{bgc}, mode{m}
     {
         ;
