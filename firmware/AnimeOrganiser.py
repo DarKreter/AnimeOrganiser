@@ -11,9 +11,40 @@ parser.add_argument('-LQ', action='store_true')
 args = parser.parse_args()
 
 
+path = args.d.replace("\\","")
+print(path)
+# Get subdirs to current dir
+subdirs = next(os.walk(args.d))[1]
+match = []
+
+for subdir in subdirs:
+    if subdir[0] == '[':                    # start with [
+        idx = subdir.find("]")              # find first ]
+        if idx != -1:                       # if not foudn
+            if subdir[1:idx].isnumeric():   # is number
+                match.append(subdir)
+
 if args.LQ and args.HQ:
-    print("You can't choose both versions!")
-elif args.LQ:
-    os.system("AnimeOrganiserLQ \"{}\"".format(args.d))
+    print("\033[31mYou can't choose both versions!\033[0m")
+    exit(1)
+if args.LQ:
+    ver = "AnimeOrganiserLQ"
 else:
-    os.system("AnimeOrganiserHQ \"{}\"".format(args.d))
+    ver = "AnimeOrganiserHQ"
+    
+      
+if match:
+    print("Anime season folders detected!")
+    print("Initializing sequence of pain and destruction...")
+    for m in match:
+        path = "{}/{}".format(args.d,m)
+        command = "AnimeOrganiserHQ \"{}\"".format(path)
+        print("-"*70)
+        print("Executing Anime Organiser for {}...".format(path))
+        print("-"*70)
+        os.system(command)
+else:
+    command = "AnimeOrganiserHQ \"{}\"".format(args.d)
+    # os.system(command)
+    
+    
