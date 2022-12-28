@@ -1,32 +1,73 @@
 #ifndef ENTERTAINMENT_H
 #define ENTERTAINMENT_H
 
-#ifdef _WIN32
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif
-
 #include <iostream>
+#include <stdint.h>
+#include <string>
+#include <unistd.h>
 
 namespace ent {
-enum Color : uint8_t {
-    black,
-    darkBlue,
-    green,
-    turquoise,
-    darkRed,
-    purple,
-    shitDillyPink,
-    silver,
-    gray,
-    blue,
-    lime,
-    cyan,
-    red,
-    pink,
-    yellow,
-    white
+
+class Format_t {
+    // Constants
+    constexpr static char const* begin_sequence = "\033[";
+    constexpr static char const* end_sequence = "m";
+    constexpr static char const* rgb_sequence = "2;";
+
+    enum Ground : uint8_t {
+        foreground = 3,
+        background
+    };
+
+public:
+    // Enumerate types
+    enum Color : uint8_t {
+        black,
+        red,
+        green,
+        yellow,
+        blue,
+        purple,
+        cyan,
+        white,
+        rgb,
+        none
+    };
+
+    enum Mode : uint8_t {
+        normal = 0,
+        italic = 1,       // 3;
+        underline = 2,    // 4;
+        slowBlinking = 4, // 5;
+        fastBlinking = 8, // 6;
+        reverse = 16,     // 7;
+        hide = 32,        // 8;
+        cross_out = 64    // 9;
+    };
+
+    friend Mode operator|(const Mode& mode1, const Mode& mode2)
+    {
+        return Mode(uint8_t(mode1) | uint8_t(mode2));
+    }
+
+    struct RGB {
+        uint8_t red, green, blue;
+    };
+
+private:
+    // private variables
+    Color foregroundColor = none, backgroundColor = none;
+    RGB fRGB, bRGB;
+    uint8_t mode;
+
+public:
+    // Access functions
+    void SetFColor(Color _color, RGB _rgb = {0, 0, 0});
+    void SetBColor(Color _color, RGB _rgb = {0, 0, 0});
+    void SetMode(Mode _mode) { mode = uint8_t(_mode); }
+    std::string Sequence() const;
+
+    friend std::ostream& operator<<(std::ostream& stream, const Format_t& _format);
 };
 
 /*
@@ -43,15 +84,6 @@ void Dots(int, int = 3, char = '.');
     @param okresla ile ms ma byc odstepu pomiedzy kolejnymi charami
 */
 void Fan(int, int);
-
-/*
-    Zmienia kolor konsoli
-    Works only for Windows
-    Will have no effect on Linux/Unix
-    @param foreground color
-    @param background color
-*/
-void ChangeColor(Color, Color = black);
 
 } // namespace ent
 

@@ -1,8 +1,39 @@
 #include "Entertainment.hpp"
+#include <math.h>
 
 using namespace std;
-
 namespace ent {
+
+string Format_t::Sequence() const
+{
+    std::string sequence = begin_sequence;
+
+    for(uint8_t i = 0; i < 7; i++)              // Check each mode
+        if(int(pow(2, i)) & mode)               // if flag is set
+            sequence += to_string(i + 3) + ";"; // add this mode
+
+    if(foregroundColor != none) { // one of colors
+                                  // do standard color
+        sequence += to_string((int)foreground) + to_string((int)foregroundColor) + ";";
+        if(foregroundColor == rgb) // eventually add rgb sequence
+            sequence += rgb_sequence + to_string((int)fRGB.red) + ";" + to_string((int)fRGB.green) +
+                        ";" + to_string((int)fRGB.blue) + ";";
+    }
+
+    if(backgroundColor != none) { // one of colors
+                                  // do standard color
+        sequence += to_string((int)background) + to_string((int)backgroundColor) + ";";
+        if(backgroundColor == rgb) // eventually add rgb sequence
+            sequence += rgb_sequence + to_string((int)bRGB.red) + ";" + to_string((int)bRGB.green) +
+                        ";" + to_string((int)bRGB.blue) + ";";
+    }
+
+    sequence.erase(sequence.end() - 1);
+    sequence += end_sequence;
+    // cout << sequence.substr(1) << endl;
+    return sequence;
+}
+
 void Dots(int czas, int howManyTimes, char znak)
 {
     for(int i = 1; i <= howManyTimes; i++) {
@@ -21,11 +52,21 @@ void Fan(int howLong, int breakTime)
     }
 }
 
-void ChangeColor([[maybe_unused]] Color f, [[maybe_unused]] Color b)
+void Format_t::SetFColor(Color _color, RGB _rgb)
 {
-#ifdef _WIN32
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
-                            static_cast<int>(f) + static_cast<int>(b) * 16);
-#endif
+    foregroundColor = _color;
+    fRGB = _rgb;
 }
+void Format_t::SetBColor(Color _color, RGB _rgb)
+{
+    backgroundColor = _color;
+    bRGB = _rgb;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Format_t& _format)
+{
+    stream << _format.Sequence();
+    return stream;
+}
+
 } // namespace ent
