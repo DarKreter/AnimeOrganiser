@@ -12,6 +12,10 @@ using file::File;
 
 // #define LOG_VERSION
 
+// argv[1] - Path
+// argv[2] - AnimeName
+// argv[3] - Episode offset
+
 int main(int argc, char* argv[])
 {
 
@@ -24,9 +28,9 @@ int main(int argc, char* argv[])
     } ll(&log);
 #endif
 
-    if(argc == 5) /// Jesli nastapilo wywolanie odgorne przekazujemy dane klasie
+    if(argc == 4) /// Jesli nastapilo wywolanie odgorne przekazujemy dane klasie
     {
-        File::Configure(argv[1], argv[2], File::GetSeasonNumber(argv[2]));
+        File::Configure(argv[2], argv[1], File::GetSeasonNumber(argv[2]));
         Episode::Offset(stoi(argv[3]));
     }
     else /// Jesli musimy te dane sami pobrac

@@ -16,6 +16,11 @@ using file::Subtitle;
 // Jesli chcesz przesunac numery wszystkich odcinkow to pojdz na sam szczyt File.h i tam masz define
 // ktory to obsluguje
 
+// argv[1] - Path
+// argv[2] - AnimeName
+// argv[3] - Episode offset
+// argv[4] - subtitle offset
+
 int main(int argc, char* argv[])
 {
 
@@ -30,7 +35,7 @@ int main(int argc, char* argv[])
 
     if(argc == 5) /// Jesli nastapilo wywolanie odgorne przekazujemy dane klasie
     {
-        File::Configure(argv[1], argv[2], File::GetSeasonNumber(argv[2]));
+        File::Configure(argv[2], argv[1], File::GetSeasonNumber(argv[2]));
         Episode::Offset(stoi(argv[3]));
         Subtitle::Offset(stoi(argv[4]));
     }
@@ -41,7 +46,7 @@ int main(int argc, char* argv[])
         cout << errorColor << "Number of passed arguments is invalid! [" << dataColor << argc
              << errorColor << "]" << endl
              << SIColor << "Initialization of manual input of data [ ]\b\b" << dataColor;
-        ent::Fan(2, 120'000);
+        ent::Fan(11, 120'000);
 
         cout << dataColor << "SUCCESS!" << SIColor << "]" << endl << endl;
 
