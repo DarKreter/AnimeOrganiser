@@ -43,9 +43,9 @@ int main(int argc, char* argv[])
     {
         string animeName;
 
-        cout << errorColor << "Number of passed arguments is invalid! [" << dataColor << argc
-             << errorColor << "]" << endl
-             << SIColor << "Initialization of manual input of data [ ]\b\b" << dataColor;
+        // cout << errorColor << "Number of passed arguments is invalid! [" << dataColor << argc
+        //      << errorColor << "]" << endl
+        cout << SIColor << "Initialization of manual input of data [ ]\b\b" << dataColor;
         ent::Fan(11, 120'000);
 
         cout << dataColor << "SUCCESS!" << SIColor << "]" << endl << endl;

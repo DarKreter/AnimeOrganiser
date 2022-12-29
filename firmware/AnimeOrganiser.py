@@ -12,7 +12,7 @@ args = parser.parse_args()
 
 
 path = args.d.replace("\\","")
-print(path)
+
 # Get subdirs to current dir
 subdirs = next(os.walk(args.d))[1]
 match = []
@@ -32,19 +32,24 @@ if args.LQ:
 else:
     ver = "AnimeOrganiserHQ"
     
-      
+print("\033[34m") #blue
 if match:
     print("Anime season folders detected!")
     print("Initializing sequence of pain and destruction...")
     for m in match:
         path = "{}/{}".format(args.d,m)
-        command = "AnimeOrganiserHQ \"{}\"".format(path)
+        command = "{} \"{}\"".format(ver, path)
+        print("\033[36m") #blue
         print("-"*70)
-        print("Executing Anime Organiser for {}...".format(path))
+        print("Executing Anime Organiser for '{}'...".format(path))
         print("-"*70)
         os.system(command)
 else:
-    command = "AnimeOrganiserHQ \"{}\"".format(args.d)
-    # os.system(command)
+    print("\033[36m") #blue
+    print("-"*70)
+    print("Executing Anime Organiser for '{}'...".format(args.d))
+    print("-"*70)
+    command = "{} \"{}\"".format(ver, args.d)
+    os.system(command)
     
     
