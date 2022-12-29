@@ -18,7 +18,7 @@ struct Error_t {
 };
 
 class File {
-public:
+private:
     static std::string animeName;
     static std::string animeDirectory;
     static int seasonNumber;
