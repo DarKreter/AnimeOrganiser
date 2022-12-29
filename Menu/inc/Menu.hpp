@@ -148,6 +148,7 @@ class Menu_t {
     class MenuOption_t;
     friend MenuOption_t;
     friend void* MenuBuforChecker(void*);
+    friend void Capture(int);
 
     std::vector<MenuOption_t> menuList;
     uint_least8_t choice;
@@ -156,6 +157,7 @@ class Menu_t {
     const size_t maxWidth;
     const uint_least8_t upLine;
 
+    static inline termios oldTerminalSetup;
     static inline std::queue<char> bufor;
     static inline uint8_t isAnyMenuActive = 0;
 

@@ -1,4 +1,5 @@
 #include "Menu.hpp"
+#include <signal.h>
 
 using namespace std;
 using namespace ent;
@@ -36,14 +37,25 @@ void StartNewThread(void* (*Funkcja)(void*), pthread_t& thread, void* argList)
     pthread_attr_destroy(&attr);
 }
 
+void Capture(int sig)
+{
+    tcsetattr(STDIN_FILENO, TCSANOW, &Menu_t::oldTerminalSetup);
+    exit(0);
+}
+
 void* MenuBuforChecker(void*)
 {
     // hide user input
-    termios oldt;
-    tcgetattr(STDIN_FILENO, &oldt);
-    termios newt = oldt;
+    tcgetattr(STDIN_FILENO, &Menu_t::oldTerminalSetup);
+    termios newt = Menu_t::oldTerminalSetup;
     newt.c_lflag &= ~ECHO;
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    // I know shitty solution, but I don't know how to hide user input while in menu
+    // getchar gets letter but echoes them anyway...
+    // So i just hide input and later show it
+    // And in case CTRL + C, remember to enable input from user
+    signal(SIGINT, Capture);
+    signal(SIGTERM, Capture);
 
     while(true) {
         usleep(DEFAULT_MENU_REFRESH_TIME);
@@ -52,7 +64,7 @@ void* MenuBuforChecker(void*)
             Menu_t::bufor.push(getchar());
 
         if(!Menu_t::isAnyMenuActive) {
-            tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // restore user input
+            tcsetattr(STDIN_FILENO, TCSANOW, &Menu_t::oldTerminalSetup); // restore user input
             return 0;
         }
     }
