@@ -1,6 +1,7 @@
 #include "FilesManagment.hpp"
 
 #include <fstream>
+#include <memory>
 #include <unistd.h>
 
 using namespace std;

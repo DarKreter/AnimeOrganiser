@@ -2,11 +2,6 @@
 #define FILE_H
 
 #include "Entertainment.hpp"
-#include <algorithm>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <string>
 
 #define EPISODE_DELAY 0
 extern ent::Format_t errorColor, SIColor, userColor, userMenuColor, dataColor, successColor;

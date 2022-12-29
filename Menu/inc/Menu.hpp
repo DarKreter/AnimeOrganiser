@@ -3,25 +3,17 @@
 
 #include "Entertainment.hpp"
 #include <forward_list>
-#include <fstream>
 #include <functional>
-#include <iostream>
 #include <queue>
-#include <sstream>
-#include <stdio.h>
-#include <string>
-#include <vector>
 
 #ifdef _WIN32
 #include <Windows.h>
 #include <conio.h>
 #include <process.h>
 #else
-#include <curses.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <termios.h>
-#include <unistd.h>
 #endif
 
 #define DEFAULT_UP_KEYBOARD_KEYS                                                                   \

@@ -1,5 +1,6 @@
 #include "Menu.hpp"
 #include <signal.h>
+#include <sstream>
 
 using namespace std;
 using namespace ent;

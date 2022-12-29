@@ -2,7 +2,6 @@
 #define ENTERTAINMENT_H
 
 #include <iostream>
-#include <stdint.h>
 #include <string>
 #include <unistd.h>
 

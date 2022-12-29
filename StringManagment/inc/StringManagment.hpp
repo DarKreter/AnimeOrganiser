@@ -1,10 +1,7 @@
 #ifndef STRINGMANAGMENT_H
 #define STRINGMANAGMENT_H
 
-#include <locale>
 #include <string>
-// #include <tchar.h>
-#include <vector>
 
 namespace sm {
 /**

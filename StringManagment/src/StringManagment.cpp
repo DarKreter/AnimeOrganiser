@@ -1,4 +1,6 @@
 #include "StringManagment.hpp"
+#include <locale>
+#include <vector>
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 #include "Entertainment.hpp"
 #include "FilesManagment.hpp"
 #include "StringManagment.hpp"
-#include <algorithm>
+#include <iomanip>
 
 using namespace std;
 using file::File;
