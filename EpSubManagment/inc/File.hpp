@@ -3,7 +3,6 @@
 
 #include "Entertainment.hpp"
 
-#define EPISODE_DELAY 0
 extern ent::Format_t errorColor, SIColor, userColor, userMenuColor, dataColor, successColor;
 
 namespace file {
@@ -20,9 +19,12 @@ private:
     static int maxEpisodeNumber;
     std::string originalName;
     std::string originalNameWithPath;
+    static inline size_t episodeOffset = 0;
 
 public:
     int episodeNumber = 0;
+
+    static void SetEpisodeOffset(size_t _episodeDelay) { episodeOffset = _episodeDelay; }
 
     std::string GetFileExtension();
     std::string NewName();

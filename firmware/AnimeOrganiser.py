@@ -6,6 +6,8 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument("-d",  type=str, default="./",
                     help="path to download")
+parser.add_argument("-o",  type=int, default=0,
+                    help="offset to episode")
 parser.add_argument('-HQ', action='store_true') # HQ on default
 parser.add_argument('-LQ', action='store_true')
 args = parser.parse_args()
@@ -38,7 +40,7 @@ if match:
     print("Initializing sequence of pain and destruction...")
     for m in match:
         path = "{}/{}".format(args.d,m)
-        command = "{} \"{}\"".format(ver, path)
+        command = "{} \"{}\" {}".format(ver, path, args.o)
         print("\033[36m") #blue
         print("-"*70)
         print("Executing Anime Organiser for '{}'...".format(path))
@@ -49,7 +51,7 @@ else:
     print("-"*70)
     print("Executing Anime Organiser for '{}'...".format(args.d))
     print("-"*70)
-    command = "{} \"{}\"".format(ver, args.d)
+    command = "{} \"{}\" {}".format(ver, args.d, args.o)
     os.system(command)
     
     

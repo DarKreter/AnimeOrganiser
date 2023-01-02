@@ -12,9 +12,9 @@ using file::File;
 
 // #define LOG_VERSION
 
-// argv[1] - Path
-// argv[2] - AnimeName
-// argv[3] - Episode offset
+// argv[2] - Path
+// argv[3] - AnimeName
+// argv[4] - Episode offset
 
 int main(int argc, char* argv[])
 {
@@ -30,11 +30,15 @@ int main(int argc, char* argv[])
 
     if(argc == 4) /// Jesli nastapilo wywolanie odgorne przekazujemy dane klasie
     {
-        File::Configure(argv[2], argv[1], File::GetSeasonNumber(argv[2]));
-        Episode::Offset(stoi(argv[3]));
+        File::Configure(argv[3], argv[2], File::GetSeasonNumber(argv[3]));
+        Episode::Offset(stoi(argv[4]));
     }
     else /// Jesli musimy te dane sami pobrac
     {
+        if(argc > 1) {
+            File::SetEpisodeOffset(stoi(argv[1]));
+        }
+
         string animeName;
 
         // cout << errorColor << "Number of passed arguments is invalid! [" << dataColor << argc

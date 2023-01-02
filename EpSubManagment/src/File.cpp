@@ -66,7 +66,7 @@ void File::FindEpNumber(int offset)
         auto temp = stoi(originalName.substr(begPos, endPos - begPos));
 
         // tutaj mozesz se zmienic numerek jakbys chcial
-        temp += EPISODE_DELAY;
+        temp += episodeOffset;
 
         // cout << originalName.substr(begPos, endPos - begPos) << "\n";
         episodeNumber = temp;

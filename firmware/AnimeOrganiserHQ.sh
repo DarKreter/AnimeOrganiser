@@ -7,4 +7,4 @@ if [ "$1" ]
 fi # if no input arg, execute in current dir
 
 # Call by full name
-/home/kretes/k8d.server.anime_organiser/Execute\ Files/AnimeOrganiserHQ\ v.3
+/home/kretes/k8d.server.anime_organiser/Execute\ Files/AnimeOrganiserHQ\ v.3 $2
