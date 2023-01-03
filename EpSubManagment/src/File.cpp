@@ -130,7 +130,7 @@ int File::GetSeasonNumber(string path)
 
     try {
         path.erase(path.length() - 1, 1);
-        path = path.substr(path.find_last_of('\\') + 1, string::npos);
+        path = path.substr(path.find_last_of('/') + 1, string::npos);
         string::size_type beg = path.find('[');
         string::size_type end = path.find(']');
 
