@@ -5,23 +5,25 @@
 #include <vector>
 
 namespace file {
-class Subtitle : public file::File {
+class Subtitle: public file::File {
 private:
-    static inline int offset;
-    static inline std::vector<std::string> extensions = {"*.ass", "*.srt", "*.txt", "*.ssa"};
+	static inline int offset;
+	static inline std::vector<std::string> extensions = {"*.ass", "*.srt", "*.txt",
+														 "*.ssa"};
 
 public:
-    Subtitle(std::string n) : File(n) { ; }
+	Subtitle(std::string n): File(n) { ; }
 
-    std::string NewName();
-    static inline std::vector<std::string> folders = {"sub", "subs", "napisy", "subtitles"};
-    static void Offset(int of) { offset = of; }
-    static int Offset() { return offset; }
-    static std::vector<std::string>& Extensions() { return extensions; }
+	std::string NewName();
+	static inline std::vector<std::string> folders = {"sub", "subs", "napisy",
+													  "subtitles"};
+	static void Offset(int of) { offset = of; }
+	static int Offset() { return offset; }
+	static std::vector<std::string> &Extensions() { return extensions; }
 
-    void FindEpNumber() { this->File::FindEpNumber(offset); }
+	void FindEpNumber() { this->File::FindEpNumber(offset); }
 };
 
-}; // namespace file
+};	// namespace file
 
-#endif // !SUBTITLE_H
+#endif	// !SUBTITLE_H
