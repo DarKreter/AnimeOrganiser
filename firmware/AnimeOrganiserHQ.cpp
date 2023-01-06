@@ -229,10 +229,25 @@ int main(int argc, char *argv[])
 			getchar();
 			continue;
 		}
+		else if(subtitlesSorted[i].size() == 0 && episodesSorted[i].size() == 1)  // DONE
+		{
+			cout << "Error! Couldn't find subtitle number " << i
+				 << " even though there is episode !" << endl
+				 << "Executing LQ on this one..." << endl;
+
+			fm::RenameFile(episodesSorted[i][0].OriginalNameWithPath(),
+						   episodesSorted[i][0].NewName());
+
+			cout << "\t" << SIColor << episodesSorted[i][0].NewName() << " - "
+				 << successColor << "DONE!" << endl
+				 << errorColor;
+
+			continue;
+		}
 		else if(subtitlesSorted[i].size() == 0)	 // DONE
 		{
 			cout << "Error! Couldn't find subtitle number " << i
-				 << " even though there is episode !" << endl;
+				 << " even though there are multiple episodes!" << endl;
 
 			// Przekopiowanie wszystkich napisow jakie byly bez pary do bazy napisow z
 			// ostatniego odcinka
